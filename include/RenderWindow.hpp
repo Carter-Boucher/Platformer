@@ -12,8 +12,12 @@ public:
 	int getRefreshRate();
 	void cleanUp();
 	void clear();
-	void render(Entity& p_entity);
+	void render(Entity& p_entity, float factor_pos, float factor_w, float factor_h);
+	void renderSprite(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size);
 	void display();
+	SDL_Renderer* getRenderer(){
+		return renderer;
+	}
 private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;

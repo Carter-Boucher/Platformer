@@ -45,23 +45,43 @@ void RenderWindow::clear()
 	SDL_RenderClear(renderer);
 }
 
-void RenderWindow::render(Entity& p_entity)
+void RenderWindow::render(Entity& p_entity, float factor_pos, float factor_w, float factor_h)
 {
 	SDL_Rect src;
 	src.x = p_entity.getCurrentFrame().x;
 	src.y = p_entity.getCurrentFrame().y;
 	src.w = p_entity.getCurrentFrame().w;
 	src.h = p_entity.getCurrentFrame().h;
+	//std::cout << p_entity.getCurrentFrame().w << " " << p_entity.getCurrentFrame().h << std::endl;
 
 	SDL_Rect dst;
-	dst.x = p_entity.getPos().x * 4;
-	dst.y = p_entity.getPos().y * 4;
-	dst.w = p_entity.getCurrentFrame().w * 4;
-	dst.h = p_entity.getCurrentFrame().h * 4;
+	dst.x = p_entity.getPos().x * factor_pos;
+	dst.y = p_entity.getPos().y * factor_pos;
+	dst.w = p_entity.getCurrentFrame().w * factor_w;
+	dst.h = p_entity.getCurrentFrame().h * factor_h;
 
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
 
+
+//vector2f sprite size, vector2f sprite position
+void RenderWindow::renderSprite(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size)
+{
+	SDL_Rect src;
+	src.x = sprite_pos.x;
+	src.y = sprite_pos.y;
+	src.w = sprite_size.x;
+	src.h = sprite_size.y;
+	//std::cout << p_entity.getCurrentFrame().w << " " << p_entity.getCurrentFrame().h << std::endl;
+
+	SDL_Rect dst;
+	dst.x = p_entity.getPos().x * factor_pos;
+	dst.y = p_entity.getPos().y * factor_pos;
+	dst.w = p_entity.getCurrentFrame().w * factor_w;
+	dst.h = p_entity.getCurrentFrame().h * factor_h;
+
+	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
+}
 void RenderWindow::display()
 {
 	SDL_RenderPresent(renderer);
