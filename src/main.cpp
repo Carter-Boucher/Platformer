@@ -2,6 +2,10 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
+#include <random>
+
+// #include <random>
+// #include <iostream>
 
 #include "RenderWindow.hpp"
 #include "Entity.hpp"
@@ -91,6 +95,9 @@ int main(int argc, char* args[])
 	std::vector<std::pair<size_t, size_t>> jump2  { {9, 6}, {10, 0}, {10, 1} };
 	std::vector<std::pair<size_t, size_t>> current = idle1;
 
+	SDL_Texture* cannonBallTexture = window.loadTexture("res/gfx/cannonBall.png");
+	Entity cannonBall(Vector2f(0, 510), cannonBallTexture, Vector2f(170,170));
+
 	bool gameRunning = true;
 	SDL_Event event;
 
@@ -103,6 +110,7 @@ int main(int argc, char* args[])
 	int currentBack = 0;
 	int deathCounter = 0;
 	bool death = false;
+	int ballCount = 0;
 
 	while (gameRunning)
 	{
@@ -166,6 +174,31 @@ int main(int argc, char* args[])
 			else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  move = -1; deathCounter = 0;death = false;}
 			if (event.type == SDL_KEYUP) 				  {current == idle1;  move = -1; index = 0; deathCounter = 0;}
 		}
+
+		std::random_device dev;
+    	std::mt19937 rng(dev());
+    	std::uniform_int_distribution<std::mt19937::result_type> dist6(50,1220); // distribution in range [1, 6]
+    	// std::cout << dist6(rng) << std::endl;
+    	ballCount++;
+    	int digit = 0;
+    	if(ballCount%60 == 0){
+    		digit = dist6(rng);
+    		cannonBall.setxPos(digit);
+    	}
+    	if(digit >=640){
+    		cannonBall.moveLeft(10);
+    	}
+    	if(digit < 640){
+    		cannonBall.moveRight(10);
+    	}
+    	
+    	if((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+25) 
+    		|| (cannonBall.getxPos()-25 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos())){
+    		death = true;
+    		deathCounter = 0;
+    	}
+    	
+    	window.render(cannonBall, 1, 0.4, 0.4);
 		
 		if((long long unsigned int)index == current.size()){
 			index = 0;
@@ -185,10 +218,10 @@ int main(int argc, char* args[])
 		//first to 10 second to 5
 		window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
 		if(move == 0){
-			knight.moveLeft();
+			knight.moveLeft(15);
 		}
 		if(move == 1){
-			knight.moveRight();
+			knight.moveRight(15);
 		}
 		index++;
 		Vector2f currentPos =  knight.getPos();
