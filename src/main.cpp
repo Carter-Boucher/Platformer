@@ -67,6 +67,7 @@ int main(int argc, char* args[])
 	float currentTime = utils::hireTimeInSeconds();
 	int index = 0;
 	int move = -1;
+	Vector2f pos =  knight.getPos();
 
 	while (gameRunning)
 	{
@@ -75,6 +76,7 @@ int main(int argc, char* args[])
 		float newTime = utils::hireTimeInSeconds();
 		float frameTime = newTime - currentTime;
 		currentTime = newTime;
+		pos = knight.getPos();
 
 		accumulator += frameTime;
 
@@ -91,7 +93,7 @@ int main(int argc, char* args[])
 		while (SDL_PollEvent(&event))
 		{
 			if (event.type == SDL_QUIT){gameRunning = false;}
-			if (event.key.keysym.scancode == SDL_SCANCODE_4) {current = idle1;move = -1;}
+			if (event.key.keysym.scancode == SDL_SCANCODE_4) 		  {current = idle1;   move = -1;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0;}
@@ -108,12 +110,15 @@ int main(int argc, char* args[])
 			else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  move = -1;}
-			if (event.type == SDL_KEYUP) 							  {current == idle1;index = 0;move = -1;}
+			if (event.type == SDL_KEYUP) 							  {current == idle1;  move = -1; index = 0;}
 		}
 		
 		if((long long unsigned int)index == current.size()){
 			index = 0;
 		}
+		
+		
+		
 		//sprites are 50x37
 		auto p = current[index];
 		//std::cout << p.first << ", " << p.second << std::endl;
@@ -128,6 +133,11 @@ int main(int argc, char* args[])
 			knight.moveRight();
 		}
 		index++;
+		Vector2f currentPos =  knight.getPos();
+		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){
+			current = idle1;
+		}
+		std::cout << "currentPos: " << currentPos.getx() << ", pos: " << pos.getx() << std::endl;
 		
 		int frameTicks = SDL_GetTicks() - startTicks;
 		//std::cout<< window.getRefreshRate()<<std::endl;

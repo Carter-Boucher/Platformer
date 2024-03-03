@@ -9,5 +9,8 @@ struct Vector2f
 	void print(){
 		std::cout << x << ", " << y << std::endl;
 	}
+	float getx(){
+		return x;
+	}
 	float x, y;
 };
