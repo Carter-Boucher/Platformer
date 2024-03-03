@@ -16,7 +16,7 @@ int main(int argc, char* args[])
 	if (!(IMG_Init(IMG_INIT_PNG)))
 		std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
 
-	RenderWindow window("GAME v1.0", 1280,);
+	RenderWindow window("GAME v1.0", 1280, 720);
 
 	SDL_Texture* grassTexture = window.loadTexture("res/gfx/ground_grass_1.png");
 
