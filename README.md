@@ -1,6 +1,6 @@
 # PlatformerTut
 
-Platformer build with c++ and SDL2
+Platformer built with c++ and SDL2
 
 Build system right now setup only for Sublime Text 
 
