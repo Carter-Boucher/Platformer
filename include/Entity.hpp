@@ -23,6 +23,15 @@ public:
 	void setPos(Vector2f p_pos){
 		pos = p_pos;
 	}
+	void setxPos(float p_x){
+		pos.x = p_x;
+	}
+	void setyPos(float p_y){
+		pos.y = p_y;
+	}
+	float getxPos(){
+		return pos.x;
+	}
 private:
 	Vector2f pos;
 	SDL_Texture* tex;

@@ -8,6 +8,9 @@
 #include "Math.hpp"
 #include "utils.hpp"
 
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+
 int main(int argc, char* args[])
 {
 	if (SDL_Init(SDL_INIT_VIDEO) > 0)
@@ -16,11 +19,11 @@ int main(int argc, char* args[])
 	if (!(IMG_Init(IMG_INIT_PNG)))
 		std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
 
-	RenderWindow window("GAME v1.0", 1280, 720);
+	RenderWindow window("GAME v1.0", SCREEN_WIDTH, SCREEN_HEIGHT);
 
+	//grass ground
 	SDL_Texture* grassTexture = window.loadTexture("res/gfx/ground_grass_1.png");
-
-	std::vector<Entity> entities = {Entity(Vector2f(0, 156), grassTexture, Vector2f(32,32)),
+	std::vector<Entity> grassEntities = {Entity(Vector2f(0, 156), grassTexture, Vector2f(32,32)),
 					Entity(Vector2f(30, 156), grassTexture, Vector2f(32,32)),
 					Entity(Vector2f(60, 156), grassTexture, Vector2f(32,32)),
 					Entity(Vector2f(90, 156), grassTexture, Vector2f(32,32)),
@@ -31,12 +34,41 @@ int main(int argc, char* args[])
 					Entity(Vector2f(240, 156), grassTexture, Vector2f(32,32)),
 					Entity(Vector2f(270, 156), grassTexture, Vector2f(32,32)),
 					Entity(Vector2f(300, 156), grassTexture, Vector2f(32,32))};
-
+	//blue sky			
 	SDL_Texture* skyTexture = window.loadTexture("res/gfx/sky.png");
 	Entity sky(Vector2f(0, 0), skyTexture, Vector2f(735,414));
 
-	//SDL_Texture* knigtTexture = window.loadTexture("res/gfx/hulking_knight.png");
-	//Entity knight(Vector2f(120, 100), knigtTexture);
+	//beach
+	SDL_Texture* beachSkyTexture = window.loadTexture("res/gfx/sunset.png");
+	Entity beachSky(Vector2f(0, 0), beachSkyTexture, Vector2f(600,400));
+	//500x500
+	SDL_Texture* beachGroundTexture = window.loadTexture("res/gfx/sand.png");
+	std::vector<Entity> beachEntities = {Entity(Vector2f(0, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(30, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(60, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(90, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(120, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(150, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(180, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(210, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(240, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(270, 156), beachGroundTexture, Vector2f(500,500)),
+					Entity(Vector2f(300, 156), beachGroundTexture, Vector2f(500,500))};
+
+	//hell
+	SDL_Texture* hellSkyTexture = window.loadTexture("res/gfx/hell.png");
+	Entity hellSky(Vector2f(0, 0), hellSkyTexture, Vector2f(850,850));
+	//1350x860
+	SDL_Texture* hellGroundTexture = window.loadTexture("res/gfx/rock.png");
+	std::vector<Entity> hellEntities = {Entity(Vector2f(0, 156), hellGroundTexture, Vector2f(1450,860)),
+					Entity(Vector2f(50, 156), hellGroundTexture, Vector2f(1450,860)),
+					Entity(Vector2f(100, 156), hellGroundTexture, Vector2f(1450,860)),
+					Entity(Vector2f(150, 156), hellGroundTexture, Vector2f(1450,860)),
+					Entity(Vector2f(200, 156), hellGroundTexture, Vector2f(1450,860)),
+					Entity(Vector2f(250, 156), hellGroundTexture, Vector2f(1450,860)),
+					Entity(Vector2f(300, 156), hellGroundTexture, Vector2f(1450,860)),
+					Entity(Vector2f(350, 156), hellGroundTexture, Vector2f(1450,860)),
+					Entity(Vector2f(400, 156), hellGroundTexture, Vector2f(1450,860))};
 
 	//sprites are 50x37, 350x407
 	SDL_Texture* kinghtTexture = window.loadTexture("res/gfx/adventurer-sheet.png");
@@ -68,6 +100,9 @@ int main(int argc, char* args[])
 	int index = 0;
 	int move = -1;
 	Vector2f pos =  knight.getPos();
+	int currentBack = 0;
+	int deathCounter = 0;
+	bool death = false;
 
 	while (gameRunning)
 	{
@@ -81,34 +116,55 @@ int main(int argc, char* args[])
 
 		window.clear();
 
+		//change screen at -150 and 1250 x (left and right off screen), skies need to fill 1280x633
 		//sky
-		window.render(sky,1, 1.742, 1.53);
-		//ground
-		for(Entity& e: entities){
-				window.render(e, 4, 4, 4);
+		if(currentBack == 0){
+			//735x414
+			window.render(sky,1, 1.742, 1.53);
+			//ground
+			for(Entity& e: grassEntities){
+					window.render(e, 4, 4, 4);
+			}
+		}
+		//render(Entity& p_entity, float factor_pos, float factor_w, float factor_h)
+		//hell ground = 1350x860 sky = 850,850
+		if(currentBack < 0){
+			window.render(hellSky, 1, 1.506, 0.745);
+			//ground
+			for(Entity& i: hellEntities){
+					window.render(i, 3.33, 0.24, 0.24);
+			}
+		}
+		//beach ground = 500x500 sky = 600,400
+		if(currentBack > 0){
+			window.render(beachSky,1, 2.1334, 1.583);
+			//ground
+			for(Entity& o: beachEntities){
+					window.render(o, 4, 0.256, 0.265);
+			}
 		}
 
 		while (SDL_PollEvent(&event))
 		{
 			if (event.type == SDL_QUIT){gameRunning = false;}
-			if (event.key.keysym.scancode == SDL_SCANCODE_4) 	  {current = idle1;   move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_T) 	  {current = mid;     move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_F) 	  {current = fall;    move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_V) 	  {current = slide;   move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_G) 	  {current = grab;    move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_H) 	  {current = climb;   move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_P) 	  {current = idle2;   move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_1) 	  {current = attack1; move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_2) 	  {current = attack2; move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_3) 	  {current = attack3; move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  move = -1;}
-			if (event.type == SDL_KEYUP) 				  {current == idle1;  move = -1; index = 0;}
+			if (event.key.keysym.scancode == SDL_SCANCODE_4) 	  {current = idle1;   move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_T) 	  {current = mid;     move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_F) 	  {current = fall;    move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_V) 	  {current = slide;   move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_G) 	  {current = grab;    move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_H) 	  {current = climb;   move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_P) 	  {current = idle2;   move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_1) 	  {current = attack1; move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_2) 	  {current = attack2; move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_3) 	  {current = attack3; move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1; deathCounter = 0; death = true;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  move = -1; deathCounter = 0;death = false;}
+			if (event.type == SDL_KEYUP) 				  {current == idle1;  move = -1; index = 0; deathCounter = 0;}
 		}
 		
 		if((long long unsigned int)index == current.size()){
@@ -118,7 +174,13 @@ int main(int argc, char* args[])
 		//sprites are 50x37
 		auto p = current[index];
 		//std::cout << p.first << ", " << p.second << std::endl;
-		SDL_Delay(75);
+		SDL_Delay(66);
+		// SDL_Delay(250);
+		deathCounter++;
+		if(deathCounter >= 6 && death == true){
+			p = {9,5};
+		}
+		//std::cout << "death: " << deathCounter << " sprite: " << p.first << ", " << p.second << " bool: " << death << std::endl;
 		
 		//first to 10 second to 5
 		window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
@@ -132,6 +194,16 @@ int main(int argc, char* args[])
 		Vector2f currentPos =  knight.getPos();
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){
 			current = idle1;
+		}
+		//std::cout << "pos: " << knight.getxPos() <<std::endl;
+		if(knight.getxPos() < -150){
+			//std::cout << knight.getxPos() <<std::endl;
+			currentBack--;
+			knight.setxPos(1250);
+		}
+		if(knight.getxPos() > 1250){
+			currentBack++;
+			knight.setxPos(-150);
 		}
 		//std::cout << "currentPos: " << currentPos.getx() << ", pos: " << pos.getx() << std::endl;
 		
