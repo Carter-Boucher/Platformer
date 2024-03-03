@@ -111,6 +111,7 @@ int main(int argc, char* args[])
 	int deathCounter = 0;
 	bool death = false;
 	int ballCount = 0;
+	int digit = 0;
 
 	while (gameRunning)
 	{
@@ -180,11 +181,12 @@ int main(int argc, char* args[])
     	std::uniform_int_distribution<std::mt19937::result_type> dist6(50,1220); // distribution in range [1, 6]
     	// std::cout << dist6(rng) << std::endl;
     	ballCount++;
-    	int digit = 0;
-    	if(ballCount%60 == 0){
+    	
+    	if(ballCount%60 == 0 || digit == 0){
     		digit = dist6(rng);
     		cannonBall.setxPos(digit);
     	}
+    	//std::cout << digit << std::endl;
     	if(digit >=640){
     		cannonBall.moveLeft(10);
     	}
