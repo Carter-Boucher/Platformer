@@ -184,27 +184,27 @@ int main(int argc, char* args[])
     	
     	if(ballCount%60 == 0 || digit == 0){
     		digit = dist6(rng);
+    		if(digit < knight.getxPos()+50 && digit >= knight.getxPos()){
+    			digit +=50;
+    		}
+    		if(digit > knight.getxPos()-50 && digit <= knight.getxPos()){
+    			digit +=50;
+    		}
     		cannonBall.setxPos(digit);
     	}
     	//std::cout << digit << std::endl;
-    	if(digit >=640){
-    		cannonBall.moveLeft(10);
-    	}
-    	if(digit < 640){
-    		cannonBall.moveRight(10);
-    	}
+    	if(digit >=640){cannonBall.moveLeft(10);}
+    	if(digit < 640){cannonBall.moveRight(10);}
     	
     	if((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+25) 
     		|| (cannonBall.getxPos()-25 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos())){
     		death = true;
-    		deathCounter = 0;
+    		if(deathCounter < 6){
+    			deathCounter = 0;
+    		}
     	}
     	
-    	window.render(cannonBall, 1, 0.4, 0.4);
-		
-		if((long long unsigned int)index == current.size()){
-			index = 0;
-		}
+		if((long long unsigned int)index == current.size()){index = 0;}
 		
 		//sprites are 50x37
 		auto p = current[index];
@@ -212,24 +212,23 @@ int main(int argc, char* args[])
 		SDL_Delay(66);
 		// SDL_Delay(250);
 		deathCounter++;
-		if(deathCounter >= 6 && death == true){
-			p = {9,5};
-		}
+		if(deathCounter >= 6 && death == true){p = {9,5};}
 		//std::cout << "death: " << deathCounter << " sprite: " << p.first << ", " << p.second << " bool: " << death << std::endl;
 		
 		//first to 10 second to 5
 		window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
-		if(move == 0){
-			knight.moveLeft(15);
+		if((current == attack1 || current == attack2 || current == attack3) && ((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+50) || (cannonBall.getxPos()-50 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()))){
+			std::cout << "here" <<std::endl;
 		}
-		if(move == 1){
-			knight.moveRight(15);
+		else{
+			window.render(cannonBall, 1, 0.4, 0.4);
 		}
+		
+		if(move == 0){knight.moveLeft(15);}
+		if(move == 1){knight.moveRight(15);}
 		index++;
 		Vector2f currentPos =  knight.getPos();
-		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){
-			current = idle1;
-		}
+		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){current = idle1;}
 		//std::cout << "pos: " << knight.getxPos() <<std::endl;
 		if(knight.getxPos() < -150){
 			//std::cout << knight.getxPos() <<std::endl;
