@@ -21,16 +21,16 @@ int main(int argc, char* args[])
 	SDL_Texture* grassTexture = window.loadTexture("res/gfx/ground_grass_1.png");
 
 	std::vector<Entity> entities = {Entity(Vector2f(0, 156), grassTexture, Vector2f(32,32)),
-						 	   		Entity(Vector2f(30, 156), grassTexture, Vector2f(32,32)),
-						 	   		Entity(Vector2f(60, 156), grassTexture, Vector2f(32,32)),
-						 	   		Entity(Vector2f(90, 156), grassTexture, Vector2f(32,32)),
-						 	   		Entity(Vector2f(120, 156), grassTexture, Vector2f(32,32)),
-						 	   		Entity(Vector2f(150, 156), grassTexture, Vector2f(32,32)),
-						 	   		Entity(Vector2f(180, 156), grassTexture, Vector2f(32,32)),
-						 	  	 	Entity(Vector2f(210, 156), grassTexture, Vector2f(32,32)),
-						 	   		Entity(Vector2f(240, 156), grassTexture, Vector2f(32,32)),
-						 			Entity(Vector2f(270, 156), grassTexture, Vector2f(32,32)),
-						 			Entity(Vector2f(300, 156), grassTexture, Vector2f(32,32))};
+	Entity(Vector2f(30, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(60, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(90, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(120, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(150, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(180, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(210, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(240, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(270, 156), grassTexture, Vector2f(32,32)),
+	Entity(Vector2f(300, 156), grassTexture, Vector2f(32,32))};
 
 	SDL_Texture* skyTexture = window.loadTexture("res/gfx/sky.png");
 	Entity sky(Vector2f(0, 0), skyTexture, Vector2f(735,414));
