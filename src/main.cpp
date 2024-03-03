@@ -39,9 +39,9 @@ int main(int argc, char* args[])
 	//Entity knight(Vector2f(120, 100), knigtTexture);
 
 	//sprites are 50x37, 350x407
-    SDL_Texture* kinghtTexture = window.loadTexture("res/gfx/adventurer-sheet.png");
-    Entity knight(Vector2f(400, 408), kinghtTexture, Vector2f(350,407));
-    std::vector<std::pair<size_t, size_t>> idle1  { {0, 0}, {0, 1}, {0, 2}, {0, 3} };
+	SDL_Texture* kinghtTexture = window.loadTexture("res/gfx/adventurer-sheet.png");
+	Entity knight(Vector2f(400, 408), kinghtTexture, Vector2f(350,407));
+	std::vector<std::pair<size_t, size_t>> idle1  { {0, 0}, {0, 1}, {0, 2}, {0, 3} };
 	std::vector<std::pair<size_t, size_t>> crouch { {0, 4}, {0, 5}, {0, 6}, {1, 0} };
 	std::vector<std::pair<size_t, size_t>> run    { {1, 1}, {1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6} };
 	std::vector<std::pair<size_t, size_t>> jump   { {2, 0}, {2, 1}, {2, 2}, {2, 3} };
