@@ -77,14 +77,12 @@ int main(int argc, char* args[])
 		float frameTime = newTime - currentTime;
 		currentTime = newTime;
 		pos = knight.getPos();
-
 		accumulator += frameTime;
 
 		window.clear();
 
 		//sky
 		window.render(sky,1, 1.742, 1.53);
-		
 		//ground
 		for(Entity& e: entities){
 				window.render(e, 4, 4, 4);
@@ -117,8 +115,6 @@ int main(int argc, char* args[])
 			index = 0;
 		}
 		
-		
-		
 		//sprites are 50x37
 		auto p = current[index];
 		//std::cout << p.first << ", " << p.second << std::endl;
@@ -137,16 +133,15 @@ int main(int argc, char* args[])
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){
 			current = idle1;
 		}
-		std::cout << "currentPos: " << currentPos.getx() << ", pos: " << pos.getx() << std::endl;
+		//std::cout << "currentPos: " << currentPos.getx() << ", pos: " << pos.getx() << std::endl;
 		
 		int frameTicks = SDL_GetTicks() - startTicks;
 		//std::cout<< window.getRefreshRate()<<std::endl;
 		window.display();
 		//SDL_RenderPresent(window.getRenderer());
-		//SDL_Delay(30);
 
 		if(frameTicks < 1000/window.getRefreshRate()){
-			SDL_Delay(1000/window.getRefreshRate());
+			//SDL_Delay(1000/window.getRefreshRate());
 		}
 	}
 

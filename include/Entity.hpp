@@ -25,7 +25,7 @@ public:
 	}
 private:
 	Vector2f pos;
+	SDL_Texture* tex;
 	Vector2f size;
 	SDL_Rect currentFrame;
-	SDL_Texture* tex;
 };
