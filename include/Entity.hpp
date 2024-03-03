@@ -14,6 +14,15 @@ public:
 	}
 	SDL_Texture* getTex();
 	SDL_Rect getCurrentFrame();
+	void moveRight(){
+		pos.x += 10;
+	}
+	void moveLeft(){
+		pos.x -= 10;
+	}
+	void setPos(Vector2f p_pos){
+		pos = p_pos;
+	}
 private:
 	Vector2f pos;
 	Vector2f size;

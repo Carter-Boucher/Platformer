@@ -53,9 +53,12 @@ int main(int argc, char* args[])
 	float accumulator = 0.0f;
 	float currentTime = utils::hireTimeInSeconds();
 	int knightFrame = 0;
+	bool knightRunning = false;
+	int keyPressed = 0;
 
 	while (gameRunning)
 	{
+		//std::cout << SDL_PollEvent(&event) << std::endl;
 		int startTicks = SDL_GetTicks();
 		float newTime = utils::hireTimeInSeconds();
 		float frameTime = newTime - currentTime;
@@ -63,59 +66,78 @@ int main(int argc, char* args[])
 
 		accumulator += frameTime;
 		// Get our controls and events
-		if (SDL_PollEvent(&event))
-		{
-			if (event.type == SDL_QUIT)
-					gameRunning = false;
-		}
-
-		// while(accumulator >= timeStep){
-		// 	// Get our controls and events
-		// 	while (SDL_PollEvent(&event))
-		// 	{
-		// 		if (event.type == SDL_QUIT)
-		// 			gameRunning = false;
-		// 	}
-		// 	accumulator -= timeStep;
-		// }
-
-		//const float alpha = accumulator / timeStep;
 
 		window.clear();
-
 		window.render(sky,1, 1.742, 1.53);
-
+		
+		//ground
 		for(Entity& e: entities){
-			window.render(e, 4, 4, 4);
+				window.render(e, 4, 4, 4);
 		}
-		window.display();
+
+		while (SDL_PollEvent(&event))
+		{
+			if (event.type == SDL_QUIT){
+				gameRunning = false;
+			}
+
+			//sky
+
+
+			// while(accumulator >= timeStep){
+			// 	// Get our controls and events
+			// 	while (SDL_PollEvent(&event))
+			// 	{
+			// 		if (event.type == SDL_QUIT)
+			// 			gameRunning = false;
+			// 	}
+			// 	accumulator -= timeStep;
+			// }
+			//const float alpha = accumulator / timeStep;
+
+			// knightFrame++;
+			// if(knightFrame >= 6){
+			// 		knightFrame = 0;
+			// }
+
+			//renderSprite(p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size)
+			if (event.type == SDL_KEYDOWN) {
+				keyPressed = event.key.keysym.sym;
+        	}
+        	if (event.type == SDL_KEYUP) {
+        		keyPressed = 0;
+        	}
+		}
 
 		knightFrame++;
 		if(knightFrame >= 6){
-			knightFrame = 0;
+				knightFrame = 0;
 		}
 
-		//renderSprite(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size)
-		//sprite size 64x64
-		//idle 
-		for(int i = 0; i < 5; i++){
-			window.renderSprite(knightIdle, 1, 1, 1, Vector2f(0+(64*i),64), Vector2f(64,64));
+		//A
+		if(keyPressed == 97){
+			window.renderSprite(knightRun, 1, 1, 1, Vector2f(0+(64*knightFrame),0), Vector2f(64,64));
+			knightRun.moveLeft();
 			window.display();
 		}
 
-		//run 
-		for(int j = 0; j < 5; j++){
-			window.renderSprite(knightRun, 1, 1, 1, Vector2f(0+(64*j),0), Vector2f(64,64));
+		//W
+		if(keyPressed == 100){
+			window.renderSprite(knightRun, 1, 1, 1, Vector2f(0+(64*knightFrame),0), Vector2f(64,64));
+			knightRun.moveRight();
 			window.display();
 		}
 
+		if(keyPressed == 0){
+			knightIdle.setPos(knightRun.getPos());
+			window.renderSprite(knightIdle, 1, 1, 1, Vector2f(0+(64*knightFrame),64), Vector2f(64,64));
+		}
 		
-
 		int frameTicks = SDL_GetTicks() - startTicks;
-		std::cout<< window.getRefreshRate()<<std::endl;
-
-		SDL_RenderPresent(window.getRenderer());
-		//SDL_Delay(16.66666);
+		//std::cout<< window.getRefreshRate()<<std::endl;
+		window.display();
+		//SDL_RenderPresent(window.getRenderer());
+		//SDL_Delay(30);
 
 		if(frameTicks < 1000/window.getRefreshRate()){
 			SDL_Delay(1000/window.getRefreshRate());
