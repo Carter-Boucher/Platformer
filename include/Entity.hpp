@@ -15,10 +15,10 @@ public:
 	SDL_Texture* getTex();
 	SDL_Rect getCurrentFrame();
 	void moveRight(){
-		pos.x += 10;
+		pos.x += 15;
 	}
 	void moveLeft(){
-		pos.x -= 10;
+		pos.x -= 15;
 	}
 	void setPos(Vector2f p_pos){
 		pos = p_pos;
