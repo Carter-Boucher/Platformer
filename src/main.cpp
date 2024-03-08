@@ -223,7 +223,8 @@ int main(int argc, char* args[])
 		
 		//first to 10 second to 5
 		spriteAnimate++;
-		if(spriteAnimate % 5 == 0 || spriteAnimate == 0){
+		//std::cout << "animationDelay: " << window.getRefreshRate()/12 << std::endl;
+		if(spriteAnimate % (int)(window.getRefreshRate()/12) == 0 || spriteAnimate == 0){
 			currentXAnimation = 0+(50*p.second);
 			currentYAnimation = 0+(37*p.first);
 			window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
