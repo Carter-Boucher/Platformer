@@ -116,6 +116,7 @@ int main(int argc, char* args[])
 	int ballCount = 0;
 	int digit = 0;
 	int spriteAnimate = -1;
+	float currentXAnimation = 0.f, currentYAnimation = 0.f;
 
 	while (gameRunning)
 	{
@@ -165,6 +166,8 @@ int main(int argc, char* args[])
 			else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_S) 	  {current = run;	  move = 3; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    move = -1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_T) 	  {current = mid;     move = -1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_F) 	  {current = fall;    move = -1; deathCounter = 0;death = false;}
@@ -187,7 +190,7 @@ int main(int argc, char* args[])
     	// std::cout << dist6(rng) << std::endl;
     	ballCount++;
     	
-    	if(ballCount%60 == 0 || digit == 0){
+    	if(ballCount % 150 == 0 || digit == 0){
     		digit = dist6(rng);
     		if(digit < knight.getxPos()+50 && digit >= knight.getxPos()){
     			digit +=50;
@@ -198,8 +201,8 @@ int main(int argc, char* args[])
     		cannonBall.setxPos(digit);
     	}
     	//std::cout << digit << std::endl;
-    	if(digit >=640){cannonBall.moveLeft(10);}
-    	if(digit < 640){cannonBall.moveRight(10);}
+    	if(digit >= 640){cannonBall.moveLeft(3);}
+    	if(digit < 640){cannonBall.moveRight(3);}
     	
     	if((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+25) 
     		|| (cannonBall.getxPos()-25 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos())){
@@ -221,10 +224,12 @@ int main(int argc, char* args[])
 		//first to 10 second to 5
 		spriteAnimate++;
 		if(spriteAnimate % 5 == 0 || spriteAnimate == 0){
+			currentXAnimation = 0+(50*p.second);
+			currentYAnimation = 0+(37*p.first);
 			window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
 		}
 		else{
-			window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
+			window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37));
 		}
 
 		if((current == attack1 || current == attack2 || current == attack3) && ((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+50) || (cannonBall.getxPos()-50 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()))){
@@ -234,8 +239,11 @@ int main(int argc, char* args[])
 			window.render(cannonBall, 1, 0.4, 0.4);
 		}
 		
-		if(move == 0){knight.moveLeft(15);}
-		if(move == 1){knight.moveRight(15);}
+		//-1 no move, 0 left, 1 right, 2 up, 3 down
+		if(move == 0){knight.moveLeft(5);}
+		if(move == 1){knight.moveRight(5);}
+		if(move == 2){knight.moveUp(5);}
+		if(move == 3){knight.moveDown(5);}
 		index++;
 		Vector2f currentPos =  knight.getPos();
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){current = idle1;}
@@ -264,7 +272,7 @@ int main(int argc, char* args[])
 		//std::cout << "refreshRate: " << window.getRefreshRate() << " divide: " << 1000/window.getRefreshRate() << std::endl;
 		//std::cout<< window.getRefreshRate()<<std::endl;
 		if(frameTicks < 1000/window.getRefreshRate()){
-			std::cout << 1000/window.getRefreshRate() << std::endl;
+			//std::cout << 1000/window.getRefreshRate() << std::endl;
 			SDL_Delay(1000/window.getRefreshRate());
 		}
 	}
