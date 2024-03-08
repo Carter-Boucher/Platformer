@@ -98,6 +98,9 @@ int main(int argc, char* args[])
 	SDL_Texture* cannonBallTexture = window.loadTexture("res/gfx/cannonBall.png");
 	Entity cannonBall(Vector2f(0, 510), cannonBallTexture, Vector2f(170,170));
 
+	SDL_Texture* gameOverTextTex = window.loadTexture("res/gfx/game_over.png");
+	Entity gameOverText(Vector2f(700, 100), gameOverTextTex, Vector2f(1080,1080));
+
 	bool gameRunning = true;
 	SDL_Event event;
 
@@ -112,6 +115,7 @@ int main(int argc, char* args[])
 	bool death = false;
 	int ballCount = 0;
 	int digit = 0;
+	int spriteAnimate = -1;
 
 	while (gameRunning)
 	{
@@ -127,6 +131,7 @@ int main(int argc, char* args[])
 
 		//change screen at -150 and 1250 x (left and right off screen), skies need to fill 1280x633
 		//sky
+
 		if(currentBack == 0){
 			//735x414
 			window.render(sky,1, 1.742, 1.53);
@@ -209,14 +214,19 @@ int main(int argc, char* args[])
 		//sprites are 50x37
 		auto p = current[index];
 		//std::cout << p.first << ", " << p.second << std::endl;
-		SDL_Delay(66);
-		// SDL_Delay(250);
 		deathCounter++;
 		if(deathCounter >= 6 && death == true){p = {9,5};}
 		//std::cout << "death: " << deathCounter << " sprite: " << p.first << ", " << p.second << " bool: " << death << std::endl;
 		
 		//first to 10 second to 5
-		window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
+		spriteAnimate++;
+		if(spriteAnimate % 5 == 0 || spriteAnimate == 0){
+			window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
+		}
+		else{
+			window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
+		}
+
 		if((current == attack1 || current == attack2 || current == attack3) && ((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+50) || (cannonBall.getxPos()-50 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()))){
 			std::cout << "here" <<std::endl;
 		}
@@ -241,13 +251,21 @@ int main(int argc, char* args[])
 		}
 		//std::cout << "currentPos: " << currentPos.getx() << ", pos: " << pos.getx() << std::endl;
 		
-		int frameTicks = SDL_GetTicks() - startTicks;
-		//std::cout<< window.getRefreshRate()<<std::endl;
+		if(death == true){
+			window.render(gameOverText, 0.5, 0.5, 0.5);
+		}
+
 		window.display();
 		//SDL_RenderPresent(window.getRenderer());
 
+		//std::cout << "GetTicks: " << SDL_GetTicks() << " startTicks: " << startTicks << std::endl;
+		int frameTicks = (int)SDL_GetTicks() - startTicks;
+		//std::cout << "FrameTicks: " << frameTicks << std::endl;
+		//std::cout << "refreshRate: " << window.getRefreshRate() << " divide: " << 1000/window.getRefreshRate() << std::endl;
+		//std::cout<< window.getRefreshRate()<<std::endl;
 		if(frameTicks < 1000/window.getRefreshRate()){
-			//SDL_Delay(1000/window.getRefreshRate());
+			std::cout << 1000/window.getRefreshRate() << std::endl;
+			SDL_Delay(1000/window.getRefreshRate());
 		}
 	}
 

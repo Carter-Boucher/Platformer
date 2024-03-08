@@ -20,6 +20,12 @@ public:
 	void moveLeft(int move){
 		pos.x -= move;
 	}
+	void moveUp(int move){
+		pos.y -= move;
+	}
+	void moveDown(int move){
+		pos.y += move;
+	}
 	void setPos(Vector2f p_pos){
 		pos = p_pos;
 	}
