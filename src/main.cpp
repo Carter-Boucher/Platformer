@@ -12,6 +12,8 @@
 #include "Math.hpp"
 #include "utils.hpp"
 
+float getMoveSpeed(int refreshRate);
+
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
@@ -210,19 +212,19 @@ int main(int argc, char* args[])
     	if(digit >= 640){cannonBall.moveLeft(3);}
     	if(digit < 640){cannonBall.moveRight(3);}
     	
-    	if((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+25) 
-    		|| (cannonBall.getxPos()-25 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos())){
-    		death = true;
-    		if(deathCounter < 6){
-    			deathCounter = 0;
-    		}
-    	}
+    	// if((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+25) 
+    	// 	|| (cannonBall.getxPos()-25 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos())){
+    	// 	//death = true;
+    	// 	if(deathCounter < 6){
+    	// 		deathCounter = 0;
+    	// 	}
+    	// }
     	
 		if((long long unsigned int)index == current.size()){index = 0;}
 		
 		//sprites are 50x37
 		auto p = current[index];
-		//std::cout << p.first << ", " << p.second << std::endl;
+		// std::cout << p.first << ", " << p.second << std::endl;
 		deathCounter++;
 		if(deathCounter >= 6 && death == true){p = {9,5};}
 		//std::cout << "death: " << deathCounter << " sprite: " << p.first << ", " << p.second << " bool: " << death << std::endl;
@@ -230,35 +232,39 @@ int main(int argc, char* args[])
 		//first to 10 second to 5
 		spriteAnimate++;
 		//std::cout << "animationDelay: " << window.getRefreshRate()/12 << std::endl;
-		if(spriteAnimate % (int)(window.getRefreshRate()/12) == 0 || spriteAnimate == 0){
-			currentXAnimation = 0+(50*p.second);
-			currentYAnimation = 0+(37*p.first);
+		// std::cout << window.getRefreshRate()/8 << std::endl;
+		// if(spriteAnimate % 1 == 0 || spriteAnimate == 0){
+		// 	currentXAnimation = 0+(50*p.second);
+		// 	currentYAnimation = 0+(37*p.first);
 			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));}
-			else {
+			if(!direction) {
 				flipType = SDL_FLIP_HORIZONTAL;
 				window.renderFlip(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37), degrees, NULL, flipType);
 			}
-		}
-		else{
-			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37));}
-			else {
-				flipType = SDL_FLIP_HORIZONTAL;
-				window.renderFlip(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37), degrees, NULL, flipType);
-			}
-		}
+		// }
+		// else{
+		// 	if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37));}
+		// 	if(!direction) {
+		// 		flipType = SDL_FLIP_HORIZONTAL;
+		// 		window.renderFlip(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37), degrees, NULL, flipType);
+		// 	}
+		// }
 
 		if((current == attack1 || current == attack2 || current == attack3) && ((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+50) || (cannonBall.getxPos()-50 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()))){
-			std::cout << "here" <<std::endl;
+			// std::cout << "here" <<std::endl;
 		}
 		else{
-			window.render(cannonBall, 1, 0.4, 0.4);
+			//window.render(cannonBall, 1, 0.4, 0.4);
 		}
 		
 		//-1 no move, 0 left, 1 right, 2 up, 3 down
-		if(move == 0){knight.moveLeft(5);}
-		if(move == 1){knight.moveRight(5);}
-		if(move == 2){knight.moveUp(5);}
-		if(move == 3){knight.moveDown(5);}
+		// float moveSpeed = getMoveSpeed((float)window.getRefreshRate());
+		float moveSpeed = 15;
+		// std::cout << moveSpeed << std::endl;
+		if(move == 0){knight.moveLeft(moveSpeed);}
+		if(move == 1){knight.moveRight(moveSpeed);}
+		if(move == 2){knight.moveUp(moveSpeed);}
+		if(move == 3){knight.moveDown(moveSpeed);}
 		index++;
 		Vector2f currentPos =  knight.getPos();
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){current = idle1;}
@@ -285,15 +291,25 @@ int main(int argc, char* args[])
 		int frameTicks = (int)SDL_GetTicks() - startTicks;
 		//std::cout << "FrameTicks: " << frameTicks << std::endl;
 		//std::cout << "refreshRate: " << window.getRefreshRate() << " divide: " << 1000/window.getRefreshRate() << std::endl;
-		//std::cout<< window.getRefreshRate()<<std::endl;
-		if(frameTicks < 1000/window.getRefreshRate()){
+		std::cout<< (3*1000)/window.getRefreshRate() << std::endl;
+		//if(frameTicks < 1000/window.getRefreshRate()){
 			//std::cout << 1000/window.getRefreshRate() << std::endl;
-			SDL_Delay(1000/window.getRefreshRate());
-		}
+			SDL_Delay((3*1000)/window.getRefreshRate());
+		//}
 	}
 
 	window.cleanUp();
 	SDL_Quit();
 
 	return 0;
+}
+
+float getMoveSpeed(int refreshRate){
+	if(refreshRate == 30) return 30;
+	if(refreshRate == 60) return 15;
+	if(refreshRate == 120) return 7.5;
+	if(refreshRate == 144) return 6.25;
+	if(refreshRate == 240) return 3.75;
+	if(refreshRate == 360) return 2.5;
+	return 10;
 }
