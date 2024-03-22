@@ -12,5 +12,8 @@ struct Vector2f
 	float getx(){
 		return x;
 	}
+	float gety(){
+		return y;
+	}
 	float x, y;
 };

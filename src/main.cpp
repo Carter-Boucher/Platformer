@@ -78,7 +78,7 @@ int main(int argc, char* args[])
 
 	//sprites are 50x37, 350x407
 	SDL_Texture* kinghtTexture = window.loadTexture("res/gfx/adventurer-sheet.png");
-	Entity knight(Vector2f(400, 408), kinghtTexture, Vector2f(350,407));
+	Entity knight(Vector2f(390, 408), kinghtTexture, Vector2f(350,407));
 	std::vector<std::pair<size_t, size_t>> idle1  { {0, 0}, {0, 1}, {0, 2}, {0, 3} };
 	std::vector<std::pair<size_t, size_t>> crouch { {0, 4}, {0, 5}, {0, 6}, {1, 0} };
 	std::vector<std::pair<size_t, size_t>> run    { {1, 1}, {1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6} };
@@ -118,29 +118,35 @@ int main(int argc, char* args[])
 	int ballCount = 0;
 	int digit = 0;
 	int spriteAnimate = -1;
-	float currentXAnimation = 0.f, currentYAnimation = 0.f;
+	// float currentXAnimation = 0.f, currentYAnimation = 0.f;
 	//right is true left is false
 	bool direction = true;
+	int left = 0, right = 0, top = 0, bottom = 0;
+	int prevLeft = 0, prevRight = 0, prevTop = 0, prevBottom = 0;
 
 	//flip
 	SDL_RendererFlip flipType = SDL_FLIP_NONE;
 	double degrees = 0;
+	bool collision = false;
 
 	while (gameRunning)
 	{
 		//std::cout << SDL_PollEvent(&event) << std::endl;
-		int startTicks = SDL_GetTicks();
+		// int startTicks = SDL_GetTicks();
 		float newTime = utils::hireTimeInSeconds();
 		float frameTime = newTime - currentTime;
 		currentTime = newTime;
 		pos = knight.getPos();
+		// std::cout << pos.getx() << ", " << pos.gety() << std::endl;
+
 		accumulator += frameTime;
+
+		prevLeft = left; prevRight = right; prevTop = top; prevBottom = bottom;
 
 		window.clear();
 
 		//change screen at -150 and 1250 x (left and right off screen), skies need to fill 1280x633
 		//sky
-
 		if(currentBack == 0){
 			//735x414
 			window.render(sky,1, 1.742, 1.53);
@@ -236,6 +242,7 @@ int main(int argc, char* args[])
 		// if(spriteAnimate % 1 == 0 || spriteAnimate == 0){
 		// 	currentXAnimation = 0+(50*p.second);
 		// 	currentYAnimation = 0+(37*p.first);
+		//renderSprite(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size)
 			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));}
 			if(!direction) {
 				flipType = SDL_FLIP_HORIZONTAL;
@@ -259,12 +266,13 @@ int main(int argc, char* args[])
 		
 		//-1 no move, 0 left, 1 right, 2 up, 3 down
 		// float moveSpeed = getMoveSpeed((float)window.getRefreshRate());
+		if(right >= 850) {knight.setxPos(prevRight - (50/0.55) - 46); std::cout << "collision left     "; collision = true;}
 		float moveSpeed = 15;
 		// std::cout << moveSpeed << std::endl;
-		if(move == 0){knight.moveLeft(moveSpeed);}
-		if(move == 1){knight.moveRight(moveSpeed);}
-		if(move == 2){knight.moveUp(moveSpeed);}
-		if(move == 3){knight.moveDown(moveSpeed);}
+		if(move == 0 && collision == false){knight.moveLeft(moveSpeed);}
+		if(move == 1 && collision == false){knight.moveRight(moveSpeed);}
+		if(move == 2 && collision == false){knight.moveUp(moveSpeed);}
+		if(move == 3 && collision == false){knight.moveDown(moveSpeed);}
 		index++;
 		Vector2f currentPos =  knight.getPos();
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){current = idle1;}
@@ -284,17 +292,27 @@ int main(int argc, char* args[])
 			window.render(gameOverText, 0.5, 0.5, 0.5);
 		}
 
+		//character is 21x32, sprite is 37x50
+		//22 31
+		//50 37
+		left = (int)pos.getx() + 14 + 46;
+		right = (int)pos.getx() + (50/0.55) + 46;
+		top = (int)pos.gety() + 3 + 39;
+		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
+		printf("  Vertical: %d, %d  Horizontil: %d, %d   \r", left, right, top, bottom);
+
 		window.display();
 		//SDL_RenderPresent(window.getRenderer());
 
 		//std::cout << "GetTicks: " << SDL_GetTicks() << " startTicks: " << startTicks << std::endl;
-		int frameTicks = (int)SDL_GetTicks() - startTicks;
+		// int frameTicks = (int)SDL_GetTicks() - startTicks;
 		//std::cout << "FrameTicks: " << frameTicks << std::endl;
 		//std::cout << "refreshRate: " << window.getRefreshRate() << " divide: " << 1000/window.getRefreshRate() << std::endl;
-		std::cout<< (3*1000)/window.getRefreshRate() << std::endl;
+		// std::cout<< (3*1000)/window.getRefreshRate() << std::endl;
 		//if(frameTicks < 1000/window.getRefreshRate()){
 			//std::cout << 1000/window.getRefreshRate() << std::endl;
 			SDL_Delay((3*1000)/window.getRefreshRate());
+			// SDL_Delay(200);
 		//}
 	}
 
