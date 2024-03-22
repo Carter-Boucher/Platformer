@@ -117,6 +117,12 @@ int main(int argc, char* args[])
 	int digit = 0;
 	int spriteAnimate = -1;
 	float currentXAnimation = 0.f, currentYAnimation = 0.f;
+	//right is true left is false
+	bool direction = true;
+
+	//flip
+	SDL_RendererFlip flipType = SDL_FLIP_NONE;
+	double degrees = 0;
 
 	while (gameRunning)
 	{
@@ -164,8 +170,8 @@ int main(int argc, char* args[])
 			if (event.type == SDL_QUIT){gameRunning = false;}
 			if (event.key.keysym.scancode == SDL_SCANCODE_4) 	  {current = idle1;   move = -1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false; direction = true;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false; direction = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_S) 	  {current = run;	  move = 3; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    move = -1; deathCounter = 0;death = false;}
@@ -227,10 +233,18 @@ int main(int argc, char* args[])
 		if(spriteAnimate % (int)(window.getRefreshRate()/12) == 0 || spriteAnimate == 0){
 			currentXAnimation = 0+(50*p.second);
 			currentYAnimation = 0+(37*p.first);
-			window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));
+			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));}
+			else {
+				flipType = SDL_FLIP_HORIZONTAL;
+				window.renderFlip(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37), degrees, NULL, flipType);
+			}
 		}
 		else{
-			window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37));
+			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37));}
+			else {
+				flipType = SDL_FLIP_HORIZONTAL;
+				window.renderFlip(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37), degrees, NULL, flipType);
+			}
 		}
 
 		if((current == attack1 || current == attack2 || current == attack3) && ((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+50) || (cannonBall.getxPos()-50 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()))){

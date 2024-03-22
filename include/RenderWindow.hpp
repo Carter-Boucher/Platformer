@@ -14,6 +14,7 @@ public:
 	void clear();
 	void render(Entity& p_entity, float factor_pos, float factor_w, float factor_h);
 	void renderSprite(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size);
+	void renderFlip(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size, double angle, SDL_Point* center, SDL_RendererFlip flip );
 	void display();
 	SDL_Renderer* getRenderer(){
 		return renderer;

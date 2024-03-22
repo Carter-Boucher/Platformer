@@ -82,7 +82,29 @@ void RenderWindow::renderSprite(Entity& p_entity, float factor_pos, float factor
 
 	SDL_RenderCopy(renderer, p_entity.getTex(), &src, &dst);
 }
+
+void RenderWindow::renderFlip(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size, double angle, SDL_Point* center, SDL_RendererFlip flip )
+{
+	SDL_Rect src;
+	src.x = sprite_pos.x;
+	src.y = sprite_pos.y;
+	src.w = sprite_size.x;
+	src.h = sprite_size.y;
+	//std::cout << p_entity.getCurrentFrame().w << " " << p_entity.getCurrentFrame().h << std::endl;
+
+	SDL_Rect dst;
+	dst.x = p_entity.getPos().x * factor_pos;
+	dst.y = p_entity.getPos().y * factor_pos;
+	dst.w = p_entity.getCurrentFrame().w * factor_w;
+	dst.h = p_entity.getCurrentFrame().h * factor_h;
+
+    SDL_RenderCopyEx( renderer, p_entity.getTex(), &src, &dst, angle, center, flip );
+}
+
+
+
 void RenderWindow::display()
 {
 	SDL_RenderPresent(renderer);
 }
+

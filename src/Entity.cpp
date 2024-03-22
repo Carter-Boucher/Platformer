@@ -1,7 +1,3 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <iostream>
-
 #include "Entity.hpp"
 
 Entity::Entity(Vector2f p_pos, SDL_Texture* p_tex, Vector2f p_size)
@@ -19,5 +15,9 @@ SDL_Texture* Entity::getTex(){
 }
 
 SDL_Rect Entity::getCurrentFrame(){
+	return currentFrame;
+}
+
+const SDL_Rect Entity::getConstFrame(){
 	return currentFrame;
 }

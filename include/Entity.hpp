@@ -14,6 +14,7 @@ public:
 	}
 	SDL_Texture* getTex();
 	SDL_Rect getCurrentFrame();
+	const SDL_Rect getConstFrame();
 	void moveRight(int move){
 		pos.x += move;
 	}
@@ -37,6 +38,9 @@ public:
 	}
 	float getxPos(){
 		return pos.x;
+	}
+	float getyPos(){
+		return pos.y;
 	}
 private:
 	Vector2f pos;
