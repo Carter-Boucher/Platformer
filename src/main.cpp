@@ -115,8 +115,8 @@ int main(int argc, char* args[])
 	int currentBack = 0;
 	int deathCounter = 0;
 	bool death = false;
-	int ballCount = 0;
-	int digit = 0;
+	// int ballCount = 0;
+	// int digit = 0;
 	int spriteAnimate = -1;
 	// float currentXAnimation = 0.f, currentYAnimation = 0.f;
 	//right is true left is false
@@ -127,7 +127,8 @@ int main(int argc, char* args[])
 	//flip
 	SDL_RendererFlip flipType = SDL_FLIP_NONE;
 	double degrees = 0;
-	bool collision = false;
+	bool collisionLeft = false, collisionRight = false, collisionTop = false, collisionBottom = false;
+	bool firstLoop = true;
 
 	while (gameRunning)
 	{
@@ -141,7 +142,13 @@ int main(int argc, char* args[])
 
 		accumulator += frameTime;
 
-		prevLeft = left; prevRight = right; prevTop = top; prevBottom = bottom;
+		if(firstLoop) { prevLeft = (int)pos.getx() + 14 + 46; prevRight = (int)pos.getx() + (50/0.55) + 46; prevTop = (int)pos.gety() + 3 + 39; prevBottom = (int)pos.gety() + (50/0.55) + 39 + 90; firstLoop = false;}
+		else { prevLeft = left; prevRight = right; prevTop = top; prevBottom = bottom; }
+
+		left = (int)pos.getx() + 14 + 46;
+		right = (int)pos.getx() + (50/0.55) + 46;
+		top = (int)pos.gety() + 3 + 39;
+		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
 
 		window.clear();
 
@@ -178,8 +185,8 @@ int main(int argc, char* args[])
 			if (event.type == SDL_QUIT){gameRunning = false;}
 			if (event.key.keysym.scancode == SDL_SCANCODE_4) 	  {current = idle1;   move = -1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false; direction = true;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false; direction = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false; direction = true; collisionLeft = false; collisionTop = false; collisionBottom = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false; direction = false; collisionRight = false; collisionTop = false; collisionBottom = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_S) 	  {current = run;	  move = 3; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    move = -1; deathCounter = 0;death = false;}
@@ -203,28 +210,6 @@ int main(int argc, char* args[])
     	std::uniform_int_distribution<std::mt19937::result_type> dist6(50,1220); // distribution in range [1, 6]
     	// std::cout << dist6(rng) << std::endl;
     	ballCount++;
-    	
-    	if(ballCount % 150 == 0 || digit == 0){
-    		digit = dist6(rng);
-    		if(digit < knight.getxPos()+50 && digit >= knight.getxPos()){
-    			digit +=50;
-    		}
-    		if(digit > knight.getxPos()-50 && digit <= knight.getxPos()){
-    			digit +=50;
-    		}
-    		cannonBall.setxPos(digit);
-    	}
-    	//std::cout << digit << std::endl;
-    	if(digit >= 640){cannonBall.moveLeft(3);}
-    	if(digit < 640){cannonBall.moveRight(3);}
-    	
-    	// if((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+25) 
-    	// 	|| (cannonBall.getxPos()-25 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos())){
-    	// 	//death = true;
-    	// 	if(deathCounter < 6){
-    	// 		deathCounter = 0;
-    	// 	}
-    	// }
     	
 		if((long long unsigned int)index == current.size()){index = 0;}
 		
@@ -256,29 +241,22 @@ int main(int argc, char* args[])
 		// 		window.renderFlip(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37), degrees, NULL, flipType);
 		// 	}
 		// }
-
-		if((current == attack1 || current == attack2 || current == attack3) && ((cannonBall.getxPos() <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()+50) || (cannonBall.getxPos()-50 <= knight.getxPos() && knight.getxPos() <= cannonBall.getxPos()))){
-			// std::cout << "here" <<std::endl;
-		}
-		else{
-			//window.render(cannonBall, 1, 0.4, 0.4);
-		}
 		
 		//-1 no move, 0 left, 1 right, 2 up, 3 down
 		// float moveSpeed = getMoveSpeed((float)window.getRefreshRate());
-		if(right >= 850) {knight.setxPos(prevRight - (50/0.55) - 46); std::cout << "collision left     "; collision = true;}
+		if(right >= 850) {knight.setxPos(prevRight - (50/0.55) - 46); std::cout << "collision right     "; collisionRight = true;}
+		if(left <= 150) {knight.setxPos(prevLeft - 14 - 46); std::cout << "collision left     "; collisionLeft = true;}
 		float moveSpeed = 15;
 		// std::cout << moveSpeed << std::endl;
-		if(move == 0 && collision == false){knight.moveLeft(moveSpeed);}
-		if(move == 1 && collision == false){knight.moveRight(moveSpeed);}
-		if(move == 2 && collision == false){knight.moveUp(moveSpeed);}
-		if(move == 3 && collision == false){knight.moveDown(moveSpeed);}
+		if(move == 0 && collisionLeft == false){knight.moveLeft(moveSpeed);}
+		if(move == 1 && collisionRight == false){knight.moveRight(moveSpeed);}
+		if(move == 2 && collisionTop == false){knight.moveUp(moveSpeed);}
+		if(move == 3 && collisionBottom == false){knight.moveDown(moveSpeed);}
 		index++;
 		Vector2f currentPos =  knight.getPos();
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){current = idle1;}
 		//std::cout << "pos: " << knight.getxPos() <<std::endl;
 		if(knight.getxPos() < -150){
-			//std::cout << knight.getxPos() <<std::endl;
 			currentBack--;
 			knight.setxPos(1250);
 		}
