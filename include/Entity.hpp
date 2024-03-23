@@ -47,4 +47,5 @@ private:
 	SDL_Texture* tex;
 	Vector2f size;
 	SDL_Rect currentFrame;
+	float velocityY = 0.f;
 };

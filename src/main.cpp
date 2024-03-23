@@ -117,8 +117,8 @@ int main(int argc, char* args[])
 	bool death = false;
 	// int ballCount = 0;
 	// int digit = 0;
-	int spriteAnimate = -1;
-	// float currentXAnimation = 0.f, currentYAnimation = 0.f;
+	int spriteAnimate = 0;
+	float currentXAnimation = 0.f, currentYAnimation = 0.f;
 	//right is true left is false
 	bool direction = true;
 	int left = 0, right = 0, top = 0, bottom = 0;
@@ -130,10 +130,26 @@ int main(int argc, char* args[])
 	bool collisionLeft = false, collisionRight = false, collisionTop = false, collisionBottom = false;
 	bool firstLoop = true;
 
+	//jump variables
+	Vector2f pos0, speed0(0,1), speed;
+	// const float g = 9.81;
+	const float g = 0.f;
+	float t0 = 0.f, t = 0.f, speedJump = 10;
+	bool isJumping = false;
+	bool firstJump = false;
+
+	int desired_fps = 60; 
+	int last_ticks = SDL_GetTicks();
+
 	while (gameRunning)
 	{
+
+		if (SDL_GetTicks() - last_ticks < 1000/desired_fps) {
+        	continue;
+	    } 
+	    last_ticks = SDL_GetTicks();
 		//std::cout << SDL_PollEvent(&event) << std::endl;
-		// int startTicks = SDL_GetTicks();
+		int startTicks = SDL_GetTicks();
 		float newTime = utils::hireTimeInSeconds();
 		float frameTime = newTime - currentTime;
 		currentTime = newTime;
@@ -189,7 +205,7 @@ int main(int argc, char* args[])
 			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false; direction = false; collisionRight = false; collisionTop = false; collisionBottom = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_S) 	  {current = run;	  move = 3; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    move = -1; deathCounter = 0;death = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    move = -1; deathCounter = 0;death = false; firstJump = true;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_T) 	  {current = mid;     move = -1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_F) 	  {current = fall;    move = -1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_V) 	  {current = slide;   move = -1; deathCounter = 0;death = false;}
@@ -202,57 +218,62 @@ int main(int argc, char* args[])
 			else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1; deathCounter = 0;death = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1; deathCounter = 0; death = true;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  move = -1; deathCounter = 0;death = false;}
-			if (event.type == SDL_KEYUP) 				  {current == idle1;  move = -1; index = 0; deathCounter = 0;}
+			if (event.type == SDL_KEYUP) 				  {current = idle1; move = -1; index = 0; deathCounter = 0;}
 		}
 
 		std::random_device dev;
     	std::mt19937 rng(dev());
     	std::uniform_int_distribution<std::mt19937::result_type> dist6(50,1220); // distribution in range [1, 6]
     	// std::cout << dist6(rng) << std::endl;
-    	ballCount++;
     	
 		if((long long unsigned int)index == current.size()){index = 0;}
 		
 		//sprites are 50x37
 		auto p = current[index];
-		// std::cout << p.first << ", " << p.second << std::endl;
+		std::cout << p.first << ", " << p.second << "\r";
 		deathCounter++;
 		if(deathCounter >= 6 && death == true){p = {9,5};}
 		//std::cout << "death: " << deathCounter << " sprite: " << p.first << ", " << p.second << " bool: " << death << std::endl;
 		
 		//first to 10 second to 5
-		spriteAnimate++;
+		
 		//std::cout << "animationDelay: " << window.getRefreshRate()/12 << std::endl;
 		// std::cout << window.getRefreshRate()/8 << std::endl;
-		// if(spriteAnimate % 1 == 0 || spriteAnimate == 0){
-		// 	currentXAnimation = 0+(50*p.second);
-		// 	currentYAnimation = 0+(37*p.first);
-		//renderSprite(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size)
-			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37));}
+		int mod = 6;
+		if(current == attack1) mod = 7;
+		if(current == attack2 || current == attack3) mod = 8;
+		if(spriteAnimate % mod == 0 || spriteAnimate == 0){
+			currentXAnimation = 0+(50*p.second);
+			currentYAnimation = 0+(37*p.first);
+			//renderSprite(Entity& p_entity, float factor_pos, float factor_w, float factor_h, Vector2f sprite_pos, Vector2f sprite_size)
+			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(0+(50*p.second), 0+(37*p.first)), Vector2f(50,37));}
 			if(!direction) {
 				flipType = SDL_FLIP_HORIZONTAL;
 				window.renderFlip(knight, 1, 0.55, 0.55, Vector2f((float)(0+(50*p.second)),(float)(0+(37*p.first))), Vector2f(50,37), degrees, NULL, flipType);
 			}
-		// }
-		// else{
-		// 	if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37));}
-		// 	if(!direction) {
-		// 		flipType = SDL_FLIP_HORIZONTAL;
-		// 		window.renderFlip(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37), degrees, NULL, flipType);
-		// 	}
-		// }
+		}
+		else{
+			index++;
+			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37));}
+			if(!direction) {
+				flipType = SDL_FLIP_HORIZONTAL;
+				window.renderFlip(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37), degrees, NULL, flipType);
+			}
+		}
+		spriteAnimate++;
 		
 		//-1 no move, 0 left, 1 right, 2 up, 3 down
 		// float moveSpeed = getMoveSpeed((float)window.getRefreshRate());
-		if(right >= 850) {knight.setxPos(prevRight - (50/0.55) - 46); std::cout << "collision right     "; collisionRight = true;}
-		if(left <= 150) {knight.setxPos(prevLeft - 14 - 46); std::cout << "collision left     "; collisionLeft = true;}
-		float moveSpeed = 15;
+		// if(right >= 850) {knight.setxPos(prevRight - (50/0.55) - 46); std::cout << "collision right     "; collisionRight = true;}
+		// if(left <= 150) {knight.setxPos(prevLeft - 14 - 46); std::cout << "collision left     "; collisionLeft = true;}
+		// if(bottom > 630) {knight.setyPos(prevBottom - (50/0.55) - 39 - 90); collisionBottom = true; }
+		float moveSpeed = 5;
 		// std::cout << moveSpeed << std::endl;
 		if(move == 0 && collisionLeft == false){knight.moveLeft(moveSpeed);}
 		if(move == 1 && collisionRight == false){knight.moveRight(moveSpeed);}
 		if(move == 2 && collisionTop == false){knight.moveUp(moveSpeed);}
 		if(move == 3 && collisionBottom == false){knight.moveDown(moveSpeed);}
-		index++;
+		// index++;
 		Vector2f currentPos =  knight.getPos();
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){current = idle1;}
 		//std::cout << "pos: " << knight.getxPos() <<std::endl;
@@ -277,21 +298,48 @@ int main(int argc, char* args[])
 		right = (int)pos.getx() + (50/0.55) + 46;
 		top = (int)pos.gety() + 3 + 39;
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
-		printf("  Vertical: %d, %d  Horizontil: %d, %d   \r", left, right, top, bottom);
+		// printf("  Vertical: %d, %d  Horizontil: %d, %d   \r", left, right, top, bottom);
+
+		if(firstJump){
+			t0=utils::hireTimeInSeconds();
+			std::cout << "t0: " << t0;
+    		pos0=pos;
+    		speed0 = speed;
+    		speed0.y += speedJump;
+    		isJumping = true;
+		}
+		if (isJumping)
+		{
+		    t = utils::hireTimeInSeconds()-t0;
+		    std::cout << ", t: " << t << "\r";
+		    // std::cout << pos0.y + speed0.y*t - g*t*t << "\r";
+		    knight.setyPos(pos0.y + speed0.y*t - g*t*t);
+		    // pos.y = pos0.y + speed0.y*t - g*t*t;
+		    knight.setxPos(pos0.x + speed0.x*t);
+		    // pos.x = pos0.x + speed0.x*t;
+
+		    // And test that the character is not on the ground again.
+		    if (bottom < 630)
+		    {
+		        knight.setyPos(630 - (50/0.55) - 39 - 90);
+		        firstJump = false;
+		        isJumping = false;
+		    }
+		}
 
 		window.display();
 		//SDL_RenderPresent(window.getRenderer());
 
 		//std::cout << "GetTicks: " << SDL_GetTicks() << " startTicks: " << startTicks << std::endl;
-		// int frameTicks = (int)SDL_GetTicks() - startTicks;
+		int frameTicks = (int)SDL_GetTicks() - startTicks;
 		//std::cout << "FrameTicks: " << frameTicks << std::endl;
 		//std::cout << "refreshRate: " << window.getRefreshRate() << " divide: " << 1000/window.getRefreshRate() << std::endl;
 		// std::cout<< (3*1000)/window.getRefreshRate() << std::endl;
-		//if(frameTicks < 1000/window.getRefreshRate()){
-			//std::cout << 1000/window.getRefreshRate() << std::endl;
-			SDL_Delay((3*1000)/window.getRefreshRate());
-			// SDL_Delay(200);
-		//}
+		// if(frameTicks < 1000/window.getRefreshRate()){
+		// 	//std::cout << 1000/window.getRefreshRate() << std::endl;
+		// 	SDL_Delay(1000/window.getRefreshRate());
+			// SDL_Delay(500);
+		// }
 	}
 
 	window.cleanUp();
