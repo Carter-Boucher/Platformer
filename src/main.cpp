@@ -299,7 +299,7 @@ int main(int argc, char* args[])
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
 		// printf("  Vertical: %d, %d  Horizontil: %d, %d   \r", left, right, top, bottom);
 
-		speedJump = 1000;
+		speedJump = 1500;
 		if(firstJump){
 			t0=utils::hireTimeInSeconds();
     		pos0=pos;
@@ -314,7 +314,7 @@ int main(int argc, char* args[])
 		{
 		    t = utils::hireTimeInSeconds() - t0;
 		    printf("pos: %f, speed: %f, t: %f, g: %f    answer: %f \r", pos0.y, speed0.y, t, g, pos0.y + (speed0.y * t - g * t) * t);
-		    knight.setyPos(pos0.y - (speed0.y * t - g * 200 * t * t));
+		    knight.setyPos(pos0.y - (speed0.y * t - g * 250 * t * t));
 		    if(direction && move != -1) knight.setxPos(pos0.x + speed0.x*t);
 		    if(!direction && move != -1) knight.setxPos(pos0.x - speed0.x*t);
 
@@ -323,7 +323,7 @@ int main(int argc, char* args[])
 		    {
 		    	jumping = false;
 		    	std::cout << "here";
-		        knight.setyPos(630 - (50/0.55) - 39 - 90);
+		        knight.setyPos(627 - (50/0.55) - 39 - 90);
 		        collisionBottom = false;
 		        isJumping = false;
 		        firstJump = false;
