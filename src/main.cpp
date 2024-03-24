@@ -131,25 +131,29 @@ int main(int argc, char* args[])
 	bool firstLoop = true;
 
 	//jump variables
-	Vector2f pos0, speed0(0,1), speed;
-	// const float g = 9.81;
-	const float g = 0.f;
-	float t0 = 0.f, t = 0.f, speedJump = 10;
+	Vector2f pos0, speed0(1,1), speed;
+	const float g = 9.81;
+	// const float g = 0.f;
+	float t0 = 0.f, t = 0.f, speedJump = 1;
 	bool isJumping = false;
 	bool firstJump = false;
 
 	int desired_fps = 60; 
 	int last_ticks = SDL_GetTicks();
 
+	bool jumping = false;
+
 	while (gameRunning)
 	{
 
-		if (SDL_GetTicks() - last_ticks < 1000/desired_fps) {
+		if ((int)(SDL_GetTicks() - last_ticks) < 1000/desired_fps) {
         	continue;
 	    } 
+
+	    // std::cout << "Y: " << pos.y << "\r";
 	    last_ticks = SDL_GetTicks();
 		//std::cout << SDL_PollEvent(&event) << std::endl;
-		int startTicks = SDL_GetTicks();
+		// int startTicks = SDL_GetTicks();
 		float newTime = utils::hireTimeInSeconds();
 		float frameTime = newTime - currentTime;
 		currentTime = newTime;
@@ -160,6 +164,7 @@ int main(int argc, char* args[])
 
 		if(firstLoop) { prevLeft = (int)pos.getx() + 14 + 46; prevRight = (int)pos.getx() + (50/0.55) + 46; prevTop = (int)pos.gety() + 3 + 39; prevBottom = (int)pos.gety() + (50/0.55) + 39 + 90; firstLoop = false;}
 		else { prevLeft = left; prevRight = right; prevTop = top; prevBottom = bottom; }
+		if(prevRight == prevLeft) if(prevLeft == prevTop){}
 
 		left = (int)pos.getx() + 14 + 46;
 		right = (int)pos.getx() + (50/0.55) + 46;
@@ -196,29 +201,31 @@ int main(int argc, char* args[])
 			}
 		}
 
-		while (SDL_PollEvent(&event))
+		while (SDL_PollEvent(&event) && !jumping)
 		{
-			if (event.type == SDL_QUIT){gameRunning = false;}
-			if (event.key.keysym.scancode == SDL_SCANCODE_4) 	  {current = idle1;   move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false; direction = true; collisionLeft = false; collisionTop = false; collisionBottom = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false; direction = false; collisionRight = false; collisionTop = false; collisionBottom = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_S) 	  {current = run;	  move = 3; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    move = -1; deathCounter = 0;death = false; firstJump = true;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_T) 	  {current = mid;     move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_F) 	  {current = fall;    move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_V) 	  {current = slide;   move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_G) 	  {current = grab;    move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_H) 	  {current = climb;   move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_P) 	  {current = idle2;   move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_1) 	  {current = attack1; move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_2) 	  {current = attack2; move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_3) 	  {current = attack3; move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1; deathCounter = 0;death = false;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1; deathCounter = 0; death = true;}
-			else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  move = -1; deathCounter = 0;death = false;}
-			if (event.type == SDL_KEYUP) 				  {current = idle1; move = -1; index = 0; deathCounter = 0;}
+			// if(!jumping){
+				if (event.type == SDL_QUIT){gameRunning = false;}
+				if (event.key.keysym.scancode == SDL_SCANCODE_4) 	  {current = idle1;   move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false; direction = true; collisionLeft = false; collisionTop = false; collisionBottom = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false; direction = false; collisionRight = false; collisionTop = false; collisionBottom = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_S) 	  {current = run;	  move = 3; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    deathCounter = 0;death = false; firstJump = true;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_T) 	  {current = mid;     move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_F) 	  {current = fall;    move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_V) 	  {current = slide;   move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_G) 	  {current = grab;    move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_H) 	  {current = climb;   move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_P) 	  {current = idle2;   move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_1) 	  {current = attack1; move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_2) 	  {current = attack2; move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_3) 	  {current = attack3; move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1; deathCounter = 0; death = true;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  move = -1; deathCounter = 0;death = false;}
+				if (event.type == SDL_KEYUP) 				  {current = idle1; move = -1; index = 0; deathCounter = 0;}
+			// }
 		}
 
 		std::random_device dev;
@@ -230,15 +237,10 @@ int main(int argc, char* args[])
 		
 		//sprites are 50x37
 		auto p = current[index];
-		std::cout << p.first << ", " << p.second << "\r";
 		deathCounter++;
 		if(deathCounter >= 6 && death == true){p = {9,5};}
-		//std::cout << "death: " << deathCounter << " sprite: " << p.first << ", " << p.second << " bool: " << death << std::endl;
 		
 		//first to 10 second to 5
-		
-		//std::cout << "animationDelay: " << window.getRefreshRate()/12 << std::endl;
-		// std::cout << window.getRefreshRate()/8 << std::endl;
 		int mod = 6;
 		if(current == attack1) mod = 7;
 		if(current == attack2 || current == attack3) mod = 8;
@@ -266,17 +268,15 @@ int main(int argc, char* args[])
 		// float moveSpeed = getMoveSpeed((float)window.getRefreshRate());
 		// if(right >= 850) {knight.setxPos(prevRight - (50/0.55) - 46); std::cout << "collision right     "; collisionRight = true;}
 		// if(left <= 150) {knight.setxPos(prevLeft - 14 - 46); std::cout << "collision left     "; collisionLeft = true;}
-		// if(bottom > 630) {knight.setyPos(prevBottom - (50/0.55) - 39 - 90); collisionBottom = true; }
+		//ground collision
+		if(bottom > 630) {knight.setyPos(prevBottom - (50/0.55) - 39 - 90); collisionBottom = true; }
 		float moveSpeed = 5;
-		// std::cout << moveSpeed << std::endl;
 		if(move == 0 && collisionLeft == false){knight.moveLeft(moveSpeed);}
 		if(move == 1 && collisionRight == false){knight.moveRight(moveSpeed);}
 		if(move == 2 && collisionTop == false){knight.moveUp(moveSpeed);}
 		if(move == 3 && collisionBottom == false){knight.moveDown(moveSpeed);}
-		// index++;
 		Vector2f currentPos =  knight.getPos();
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){current = idle1;}
-		//std::cout << "pos: " << knight.getxPos() <<std::endl;
 		if(knight.getxPos() < -150){
 			currentBack--;
 			knight.setxPos(1250);
@@ -285,7 +285,6 @@ int main(int argc, char* args[])
 			currentBack++;
 			knight.setxPos(-150);
 		}
-		//std::cout << "currentPos: " << currentPos.getx() << ", pos: " << pos.getx() << std::endl;
 		
 		if(death == true){
 			window.render(gameOverText, 0.5, 0.5, 0.5);
@@ -300,60 +299,45 @@ int main(int argc, char* args[])
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
 		// printf("  Vertical: %d, %d  Horizontil: %d, %d   \r", left, right, top, bottom);
 
+		speedJump = 1000;
 		if(firstJump){
 			t0=utils::hireTimeInSeconds();
-			std::cout << "t0: " << t0;
     		pos0=pos;
     		speed0 = speed;
     		speed0.y += speedJump;
+    		speed0.x += speedJump/3;
     		isJumping = true;
+    		firstJump = false;
+    		jumping = true;
 		}
 		if (isJumping)
 		{
-		    t = utils::hireTimeInSeconds()-t0;
-		    std::cout << ", t: " << t << "\r";
-		    // std::cout << pos0.y + speed0.y*t - g*t*t << "\r";
-		    knight.setyPos(pos0.y + speed0.y*t - g*t*t);
-		    // pos.y = pos0.y + speed0.y*t - g*t*t;
-		    knight.setxPos(pos0.x + speed0.x*t);
-		    // pos.x = pos0.x + speed0.x*t;
+		    t = utils::hireTimeInSeconds() - t0;
+		    printf("pos: %f, speed: %f, t: %f, g: %f    answer: %f \r", pos0.y, speed0.y, t, g, pos0.y + (speed0.y * t - g * t) * t);
+		    knight.setyPos(pos0.y - (speed0.y * t - g * 200 * t * t));
+		    if(direction && move != -1) knight.setxPos(pos0.x + speed0.x*t);
+		    if(!direction && move != -1) knight.setxPos(pos0.x - speed0.x*t);
 
-		    // And test that the character is not on the ground again.
-		    if (bottom < 630)
+		    // test that the character is not on the ground again.
+		    if (bottom > 630)
 		    {
+		    	jumping = false;
+		    	std::cout << "here";
 		        knight.setyPos(630 - (50/0.55) - 39 - 90);
-		        firstJump = false;
+		        collisionBottom = false;
 		        isJumping = false;
+		        firstJump = false;
+		        if(move == 0 || move == 1 || move == 2 || move == 3) current = run;
+		        else{current = idle1;}
+		        SDL_Delay(50);
 		    }
 		}
 
 		window.display();
-		//SDL_RenderPresent(window.getRenderer());
-
-		//std::cout << "GetTicks: " << SDL_GetTicks() << " startTicks: " << startTicks << std::endl;
-		int frameTicks = (int)SDL_GetTicks() - startTicks;
-		//std::cout << "FrameTicks: " << frameTicks << std::endl;
-		//std::cout << "refreshRate: " << window.getRefreshRate() << " divide: " << 1000/window.getRefreshRate() << std::endl;
-		// std::cout<< (3*1000)/window.getRefreshRate() << std::endl;
-		// if(frameTicks < 1000/window.getRefreshRate()){
-		// 	//std::cout << 1000/window.getRefreshRate() << std::endl;
-		// 	SDL_Delay(1000/window.getRefreshRate());
-			// SDL_Delay(500);
-		// }
 	}
 
 	window.cleanUp();
 	SDL_Quit();
 
 	return 0;
-}
-
-float getMoveSpeed(int refreshRate){
-	if(refreshRate == 30) return 30;
-	if(refreshRate == 60) return 15;
-	if(refreshRate == 120) return 7.5;
-	if(refreshRate == 144) return 6.25;
-	if(refreshRate == 240) return 3.75;
-	if(refreshRate == 360) return 2.5;
-	return 10;
 }
