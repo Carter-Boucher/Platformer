@@ -1,4 +1,6 @@
 ; MyAppInstaller.nsi
+; Include Modern UI
+; !include "MUI2.nsh"
 
 ; Set the name of the installer
 Outfile "MyAppInstaller.exe"
@@ -20,7 +22,7 @@ Section
 
     ; Create shortcuts
     CreateShortCut "$DESKTOP\main.lnk" "$INSTDIR\release\main.exe"
-    CreateShortCut "$SMPROGRAMS\main\main.lnk" "$INSTDIR\release\main.exe"
+    CreateShortCut "$SMPROGRAMS\main.lnk" "$INSTDIR\release\main.exe"
 
 SectionEnd
 
@@ -50,6 +52,10 @@ Function ShowError
     MessageBox MB_ICONSTOP|MB_OK "An error occurred during installation. Please try again or contact support."
 FunctionEnd
 
+Function complete
+    MessageBox MB_ICONSTOP|MB_OK "Installation complete."
+FunctionEnd
+
 ; Function to handle the installer initialization
 Function .onInit
     SetShellVarContext all ; Set the context for ProgramFiles directory
@@ -58,5 +64,23 @@ FunctionEnd
 
 ; Function to handle the installer completion
 Function .onInstSuccess
+    Call complete
+FunctionEnd
+
+Function .onInstFailed
+    Call ShowError
+FunctionEnd
+
+; Function to handle the uninstaller initialization
+Function un.onInit
+    SetShellVarContext all ; Set the context for ProgramFiles directory
+FunctionEnd
+
+; Function to handle the uninstaller completion
+Function un.onUninstSuccess
+    MessageBox MB_ICONINFORMATION|MB_OK "Uninstallation complete."
+FunctionEnd
+
+Function un.onUninstFailed
     Call ShowError
 FunctionEnd

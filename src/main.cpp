@@ -291,8 +291,7 @@ int main(int argc, char* args[])
 		}
 
 		//character is 21x32, sprite is 37x50
-		//22 31
-		//50 37
+		//22 31//50 37
 		left = (int)pos.getx() + 14 + 46;
 		right = (int)pos.getx() + (50/0.55) + 46;
 		top = (int)pos.gety() + 3 + 39;
@@ -313,16 +312,17 @@ int main(int argc, char* args[])
 		if (isJumping)
 		{
 		    t = utils::hireTimeInSeconds() - t0;
-		    printf("pos: %f, speed: %f, t: %f, g: %f    answer: %f \r", pos0.y, speed0.y, t, g, pos0.y + (speed0.y * t - g * t) * t);
+		    //printf("pos: %f, speed: %f, t: %f, g: %f    answer: %f \r", pos0.y, speed0.y, t, g, pos0.y + (speed0.y * t - g * t) * t);
 		    knight.setyPos(pos0.y - (speed0.y * t - g * 250 * t * t));
 		    if(direction && move != -1) knight.setxPos(pos0.x + speed0.x*t);
 		    if(!direction && move != -1) knight.setxPos(pos0.x - speed0.x*t);
+		    std::cout << speed0.y << "\r";
 
 		    // test that the character is not on the ground again.
-		    if (bottom > 630)
+		    if (bottom > 10000)
 		    {
 		    	jumping = false;
-		    	std::cout << "here";
+		    	//std::cout << "here";
 		        knight.setyPos(627 - (50/0.55) - 39 - 90);
 		        collisionBottom = false;
 		        isJumping = false;
