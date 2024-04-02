@@ -98,9 +98,6 @@ int main(int argc, char* args[])
 	std::vector<std::pair<size_t, size_t>> jump2  { {9, 6}, {10, 0}, {10, 1} };
 	std::vector<std::pair<size_t, size_t>> current = idle1;
 
-	SDL_Texture* cannonBallTexture = window.loadTexture("res/gfx/cannonBall.png");
-	Entity cannonBall(Vector2f(0, 510), cannonBallTexture, Vector2f(170,170));
-
 	SDL_Texture* gameOverTextTex = window.loadTexture("res/gfx/game_over.png");
 	Entity gameOverText(Vector2f(700, 100), gameOverTextTex, Vector2f(1080,1080));
 
@@ -113,11 +110,9 @@ int main(int argc, char* args[])
 	int index = 0;
 	int move = -1;
 	Vector2f pos =  knight.getPos();
-	int currentBack = 0;
+	int currentBack = 0, prevBack = 0;
 	int deathCounter = 0;
 	bool death = false;
-	// int ballCount = 0;
-	// int digit = 0;
 	int spriteAnimate = 0;
 	float currentXAnimation = 0.f, currentYAnimation = 0.f;
 	//right is true left is false
@@ -135,15 +130,13 @@ int main(int argc, char* args[])
 	Vector2f pos0, speed0(1,1), speed;
 	const float g = 9.81;
 	// const float g = 0.f;
-	float t0 = 0.f, t = 0.f, speedJump = 1;
-	bool isJumping = false;
-	bool firstJump = false;
+	float t0 = 0.f, t = 0.f;
+	bool isJumping = false, firstJump = false, jumping = false;
 
 	int desired_fps = 60; 
 	int last_ticks = SDL_GetTicks();
 
-	bool jumping = false;
-
+	//input maps
 	std::map<int, bool> keyboard;
 	std::map<int, bool> up;
 	std::map<int, bool> down;
@@ -180,7 +173,7 @@ int main(int argc, char* args[])
 
 		//change screen at -150 and 1250 x (left and right off screen), skies need to fill 1280x633
 		//sky
-		if(currentBack == 0){
+		if(currentBack % 3 == 0){
 			//735x414
 			window.render(sky,1, 1.742, 1.53);
 			//ground
@@ -190,7 +183,7 @@ int main(int argc, char* args[])
 		}
 		//render(Entity& p_entity, float factor_pos, float factor_w, float factor_h)
 		//hell ground = 1350x860 sky = 850,850
-		if(currentBack < 0){
+		if(currentBack % 3 == 1 || currentBack % 3 == -1){
 			window.render(hellSky, 1, 1.506, 0.745);
 			//ground
 			for(Entity& i: hellEntities){
@@ -198,7 +191,7 @@ int main(int argc, char* args[])
 			}
 		}
 		//beach ground = 500x500 sky = 600,400
-		if(currentBack > 0){
+		if(currentBack % 3 == 2 || currentBack % 3 == -2){
 			window.render(beachSky,1, 2.1334, 1.583);
 			//ground
 			for(Entity& o: beachEntities){
@@ -231,7 +224,7 @@ int main(int argc, char* args[])
 				else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false; direction = false; collisionRight = false; collisionTop = false; collisionBottom = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_S) 	  {current = run;	  move = 3; deathCounter = 0;death = false;}
-				else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    deathCounter = 0; death = false; firstJump = true;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    deathCounter = 0; death = false; firstJump = true; jumping = true;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_T) 	  {current = mid;     move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_F) 	  {current = fall;    move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_V) 	  {current = slide;   move = -1; deathCounter = 0;death = false;}
@@ -243,14 +236,10 @@ int main(int argc, char* args[])
 				else if (event.key.keysym.scancode == SDL_SCANCODE_3) 	  {current = attack3; move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1; deathCounter = 0; death = true;}
-				else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  deathCounter = 0;death = false; firstJump = true;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump2;	  deathCounter = 0;death = false; firstJump = true; jumping = true;}
 				if (event.type == SDL_KEYUP) 				  {current = idle1; move = -1; index = 0; deathCounter = 0;}
 			// }
 		}
-		for(auto a : up){
-			std::cout << a.first << ", " << a.second << "   \r";
-		}
-
 		std::random_device dev;
     	std::mt19937 rng(dev());
     	std::uniform_int_distribution<std::mt19937::result_type> dist6(50,1220); // distribution in range [1, 6]
@@ -300,63 +289,30 @@ int main(int argc, char* args[])
 		if(move == 3 && collisionBottom == false){knight.moveDown(moveSpeed);}
 		Vector2f currentPos =  knight.getPos();
 		if(currentPos.getx() == pos.getx() && p.second == 1 && p.first == 1){current = idle1;}
+		// std::cout << knight.getxPos() << "       \r";
 		if(knight.getxPos() < -150){
-			currentBack--;
-			knight.setxPos(1250);
+			currentBack++;
+			knight.setxPos(1240);
 		}
 		if(knight.getxPos() > 1250){
-			currentBack++;
-			knight.setxPos(-150);
+			currentBack--;
+			knight.setxPos(-140);
 		}
+		std::cout << currentBack << "      \r";
 		
-		if(death == true){
-			window.render(gameOverText, 0.5, 0.5, 0.5);
-		}
+		if(death == true){window.render(gameOverText, 0.5, 0.5, 0.5);}
 
 		//character is 21x32, sprite is 37x50
-		//22 31//50 37
 		left = (int)pos.getx() + 14 + 46;
 		right = (int)pos.getx() + (50/0.55) + 46;
 		top = (int)pos.gety() + 3 + 39;
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
 		// printf("  Vertical: %d, %d  Horizontil: %d, %d   \r", left, right, top, bottom);
 
-		knight.jump(firstJump, pos0, speed, speed0, t0, knight, t, collisionBottom, isJumping, move, direction, jumping, bottom, current, run, idle1, g);
-		speedJump = 1500;
-		// if(firstJump){
-		// 	t0=utils::hireTimeInSeconds();
-    	// 	pos0=pos;
-    	// 	speed0 = speed;
-    	// 	speed0.y += speedJump;
-    	// 	speed0.x += speedJump/3;
-    	// 	isJumping = true;
-    	// 	firstJump = false;
-    	// 	jumping = true;
-		// }
-		// if (isJumping)
-		// {
-		//     t = utils::hireTimeInSeconds() - t0;
-		//     //printf("pos: %f, speed: %f, t: %f, g: %f    answer: %f \r", pos0.y, speed0.y, t, g, pos0.y + (speed0.y * t - g * t) * t);
-		//     knight.setyPos(pos0.y - (speed0.y * t - g * 250 * t * t));
-		//     if(direction && move != -1) knight.setxPos(pos0.x + speed0.x*t);
-		//     if(!direction && move != -1) knight.setxPos(pos0.x - speed0.x*t);
-		//     std::cout << speed0.y << "\r";
-
-		//     // test that the character is not on the ground again.
-		//     if (bottom > 630)
-		//     {
-		//     	jumping = false;
-		//     	//std::cout << "here";
-		//         knight.setyPos(627 - (50/0.55) - 39 - 90);
-		//         collisionBottom = false;
-		//         isJumping = false;
-		//         firstJump = false;
-		//         if(move == 0 || move == 1 || move == 2 || move == 3) current = run;
-		//         else{current = idle1;}
-		//         SDL_Delay(50);
-		//     }
-		// }
-
+		if(jumping){prevBack = currentBack; knight.jump(firstJump, pos0, speed, speed0, t0, knight, t, collisionBottom, isJumping, move, direction, jumping, bottom, current, run, idle1, g);};
+		if(prevBack > currentBack+1){
+			currentBack = prevBack + 1;
+		}
 		window.display();
 	}
 

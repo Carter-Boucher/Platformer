@@ -43,7 +43,14 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 	    knight.setyPos(pos0.y - (speed0.y * t - g * 250 * t * t));
 	    if(direction && move != -1) knight.setxPos(pos0.x + speed0.x*t);
 	    if(!direction && move != -1) knight.setxPos(pos0.x - speed0.x*t);
-	    std::cout << speed0.y << "\r";
+	    //std::cout << speed0.y << "\r";
+
+	    if(knight.getxPos() < -150){
+			knight.setxPos(1240);
+		}
+		if(knight.getxPos() > 1250){
+			knight.setxPos(-140);
+		}
 
 	    // test that the character is not on the ground again.
 	    if (bottom > 630)
