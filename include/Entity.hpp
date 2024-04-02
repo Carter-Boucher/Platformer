@@ -5,6 +5,8 @@
 #include <iostream>
 
 #include "Math.hpp"
+#include "utils.hpp"
+#include <vector>
 
 class Entity{
 public:
@@ -42,7 +44,9 @@ public:
 	float getyPos(){
 		return pos.y;
 	}
-private:
+	void jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& speed0, float& t0, Entity& knight, float& t, 
+	bool& collisionBottom, bool& isJumping, const int move, const bool direction, bool& jumping, const int bottom, std::vector<std::pair<size_t, size_t>>& current,
+	std::vector<std::pair<size_t, size_t>>& run, std::vector<std::pair<size_t, size_t>>& idle1, const float g);
 	Vector2f pos;
 	SDL_Texture* tex;
 	Vector2f size;
