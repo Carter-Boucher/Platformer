@@ -20,27 +20,15 @@ float getMoveSpeed(int refreshRate);
 
 int main(int argc, char* args[])
 {
-	if (SDL_Init(SDL_INIT_VIDEO) > 0)
-		std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
+	if (SDL_Init(SDL_INIT_VIDEO) > 0) {std::cout << "HEY.. SDL_Init HAS FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;}
 
-	if (!(IMG_Init(IMG_INIT_PNG)))
-		std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;
+	if (!(IMG_Init(IMG_INIT_PNG))) {std::cout << "IMG_init has failed. Error: " << SDL_GetError() << std::endl;}
 
 	RenderWindow window("GAME v1.0", SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	//grass ground
 	SDL_Texture* grassTexture = window.loadTexture("res/gfx/ground_grass_1.png");
-	std::vector<Entity> grassEntities = {Entity(Vector2f(0, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(30, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(60, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(90, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(120, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(150, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(180, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(210, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(240, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(270, 156), grassTexture, Vector2f(32,32)),
-					Entity(Vector2f(300, 156), grassTexture, Vector2f(32,32))};
+	std::vector<Entity> grassEntities = {Entity(Vector2f(0, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(30, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(60, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(90, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(120, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(150, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(180, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(210, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(240, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(270, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(300, 156), grassTexture, Vector2f(32,32))};
 	//blue sky			
 	SDL_Texture* skyTexture = window.loadTexture("res/gfx/sky.png");
 	Entity sky(Vector2f(0, 0), skyTexture, Vector2f(735,414));
@@ -50,32 +38,14 @@ int main(int argc, char* args[])
 	Entity beachSky(Vector2f(0, 0), beachSkyTexture, Vector2f(600,400));
 	//500x500
 	SDL_Texture* beachGroundTexture = window.loadTexture("res/gfx/sand.png");
-	std::vector<Entity> beachEntities = {Entity(Vector2f(0, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(30, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(60, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(90, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(120, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(150, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(180, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(210, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(240, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(270, 156), beachGroundTexture, Vector2f(500,500)),
-					Entity(Vector2f(300, 156), beachGroundTexture, Vector2f(500,500))};
+	std::vector<Entity> beachEntities = {Entity(Vector2f(0, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(30, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(60, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(90, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(120, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(150, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(180, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(210, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(240, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(270, 156), beachGroundTexture, Vector2f(500,500)),Entity(Vector2f(300, 156), beachGroundTexture, Vector2f(500,500))};
 
 	//hell
 	SDL_Texture* hellSkyTexture = window.loadTexture("res/gfx/hell.png");
 	Entity hellSky(Vector2f(0, 0), hellSkyTexture, Vector2f(850,850));
 	//1350x860
 	SDL_Texture* hellGroundTexture = window.loadTexture("res/gfx/rock.png");
-	std::vector<Entity> hellEntities = {Entity(Vector2f(0, 156), hellGroundTexture, Vector2f(1450,860)),
-					Entity(Vector2f(50, 156), hellGroundTexture, Vector2f(1450,860)),
-					Entity(Vector2f(100, 156), hellGroundTexture, Vector2f(1450,860)),
-					Entity(Vector2f(150, 156), hellGroundTexture, Vector2f(1450,860)),
-					Entity(Vector2f(200, 156), hellGroundTexture, Vector2f(1450,860)),
-					Entity(Vector2f(250, 156), hellGroundTexture, Vector2f(1450,860)),
-					Entity(Vector2f(300, 156), hellGroundTexture, Vector2f(1450,860)),
-					Entity(Vector2f(350, 156), hellGroundTexture, Vector2f(1450,860)),
-					Entity(Vector2f(400, 156), hellGroundTexture, Vector2f(1450,860))};
+	std::vector<Entity> hellEntities = {Entity(Vector2f(0, 156), hellGroundTexture, Vector2f(1450,860)),Entity(Vector2f(50, 156), hellGroundTexture, Vector2f(1450,860)),Entity(Vector2f(100, 156), hellGroundTexture, Vector2f(1450,860)),Entity(Vector2f(150, 156), hellGroundTexture, Vector2f(1450,860)),Entity(Vector2f(200, 156), hellGroundTexture, Vector2f(1450,860)),Entity(Vector2f(250, 156), hellGroundTexture, Vector2f(1450,860)),Entity(Vector2f(300, 156), hellGroundTexture, Vector2f(1450,860)),Entity(Vector2f(350, 156), hellGroundTexture, Vector2f(1450,860)),Entity(Vector2f(400, 156), hellGroundTexture, Vector2f(1450,860))};
 
 	//sprites are 50x37, 350x407
 	SDL_Texture* kinghtTexture = window.loadTexture("res/gfx/adventurer-sheet.png");
@@ -101,49 +71,19 @@ int main(int argc, char* args[])
 	SDL_Texture* gameOverTextTex = window.loadTexture("res/gfx/game_over.png");
 	Entity gameOverText(Vector2f(700, 100), gameOverTextTex, Vector2f(1080,1080));
 
-	bool gameRunning = true;
 	SDL_Event event;
-
-	//const float timeStep = 0.01f;
-	float accumulator = 0.0f;
-	float currentTime = utils::hireTimeInSeconds();
-	int index = 0;
-	int move = -1;
-	Vector2f pos =  knight.getPos();
-	int currentBack = 0, prevBack = 0;
-	int deathCounter = 0;
-	bool death = false;
-	int spriteAnimate = 0;
-	float currentXAnimation = 0.f, currentYAnimation = 0.f;
-	//right is true left is false
-	bool direction = true;
-	int left = 0, right = 0, top = 0, bottom = 0;
-	int prevLeft = 0, prevRight = 0, prevTop = 0, prevBottom = 0;
-
-	//flip
+	float accumulator = 0.0f, currentXAnimation = 0.f, currentYAnimation = 0.f, currentTime = utils::hireTimeInSeconds(), t0 = 0.f, t = 0.f, degrees = 0.f;
+	int index = 0, deathCounter = 0, currentBack = 0, move = -1, spriteAnimate = 0, left = 0, right = 0, top = 0, bottom = 0, 
+		prevLeft = 0, prevRight = 0, prevTop = 0, prevBottom = 0, desired_fps = 60, last_ticks = SDL_GetTicks();
+	Vector2f pos =  knight.getPos(), pos0, speed0(1,1), speed;
 	SDL_RendererFlip flipType = SDL_FLIP_NONE;
-	double degrees = 0;
-	bool collisionLeft = false, collisionRight = false, collisionTop = false, collisionBottom = false;
-	bool firstLoop = true;
-
-	//jump variables
-	Vector2f pos0, speed0(1,1), speed;
+	bool collisionLeft = false, collisionRight = false, collisionTop = false, collisionBottom = false, firstLoop = true, 
+		direction = true, death = false, isJumping = false, firstJump = false, jumping = false, gameRunning = true;
 	const float g = 9.81;
-	// const float g = 0.f;
-	float t0 = 0.f, t = 0.f;
-	bool isJumping = false, firstJump = false, jumping = false;
-
-	int desired_fps = 60; 
-	int last_ticks = SDL_GetTicks();
-
-	//input maps
-	std::map<int, bool> keyboard;
-	std::map<int, bool> up;
-	std::map<int, bool> down;
+	std::map<int, bool> keyboard, up, down;
 
 	while (gameRunning)
 	{
-
 		if ((int)(SDL_GetTicks() - last_ticks) < 1000/desired_fps) {
         	continue;
 	    } 
@@ -176,7 +116,6 @@ int main(int argc, char* args[])
 		if(currentBack % 3 == 0){
 			//735x414
 			window.render(sky,1, 1.742, 1.53);
-			//ground
 			for(Entity& e: grassEntities){
 					window.render(e, 4, 4, 4);
 			}
@@ -185,7 +124,6 @@ int main(int argc, char* args[])
 		//hell ground = 1350x860 sky = 850,850
 		if(currentBack % 3 == 1 || currentBack % 3 == -1){
 			window.render(hellSky, 1, 1.506, 0.745);
-			//ground
 			for(Entity& i: hellEntities){
 					window.render(i, 3.33, 0.24, 0.24);
 			}
@@ -193,7 +131,6 @@ int main(int argc, char* args[])
 		//beach ground = 500x500 sky = 600,400
 		if(currentBack % 3 == 2 || currentBack % 3 == -2){
 			window.render(beachSky,1, 2.1334, 1.583);
-			//ground
 			for(Entity& o: beachEntities){
 					window.render(o, 4, 0.256, 0.265);
 			}
@@ -214,7 +151,6 @@ int main(int argc, char* args[])
 	                down[event.key.keysym.sym] = false;
 	                break;
 	        }
-
 
 			// if(!jumping){
 				if (event.type == SDL_QUIT){gameRunning = false;}
@@ -309,10 +245,7 @@ int main(int argc, char* args[])
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
 		// printf("  Vertical: %d, %d  Horizontil: %d, %d   \r", left, right, top, bottom);
 
-		if(jumping){prevBack = currentBack; knight.jump(firstJump, pos0, speed, speed0, t0, knight, t, collisionBottom, isJumping, move, direction, jumping, bottom, current, run, idle1, g);};
-		if(prevBack > currentBack+1){
-			currentBack = prevBack + 1;
-		}
+		if(jumping){knight.jump(firstJump, pos0, speed, speed0, t0, knight, t, collisionBottom, isJumping, move, direction, jumping, bottom, current, run, idle1, g);};
 		window.display();
 	}
 
