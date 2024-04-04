@@ -75,8 +75,8 @@ void RenderWindow::renderSprite(Entity& p_entity, float factor_pos, float factor
 	//std::cout << p_entity.getCurrentFrame().w << " " << p_entity.getCurrentFrame().h << std::endl;
 
 	SDL_Rect dst;
-	dst.x = p_entity.getPos().x * factor_pos;
-	dst.y = p_entity.getPos().y * factor_pos;
+	dst.x = p_entity.getPos().x * factor_pos - 50;
+	dst.y = p_entity.getPos().y * factor_pos - 30;
 	dst.w = p_entity.getCurrentFrame().w * factor_w;
 	dst.h = p_entity.getCurrentFrame().h * factor_h;
 
@@ -93,8 +93,8 @@ void RenderWindow::renderFlip(Entity& p_entity, float factor_pos, float factor_w
 	//std::cout << p_entity.getCurrentFrame().w << " " << p_entity.getCurrentFrame().h << std::endl;
 
 	SDL_Rect dst;
-	dst.x = p_entity.getPos().x * factor_pos;
-	dst.y = p_entity.getPos().y * factor_pos;
+	dst.x = p_entity.getPos().x * factor_pos - 50;
+	dst.y = p_entity.getPos().y * factor_pos - 30;
 	dst.w = p_entity.getCurrentFrame().w * factor_w;
 	dst.h = p_entity.getCurrentFrame().h * factor_h;
 

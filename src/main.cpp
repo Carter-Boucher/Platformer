@@ -26,6 +26,9 @@ int main(int argc, char* args[])
 
 	RenderWindow window("GAME v1.0", SCREEN_WIDTH, SCREEN_HEIGHT);
 
+	SDL_Texture* collisionBoxText = window.loadTexture("res/gfx/collisionBox.png");
+	Entity collisionBox(Vector2f(0,0), collisionBoxText, Vector2f(1100,1100));
+
 	//grass ground
 	SDL_Texture* grassTexture = window.loadTexture("res/gfx/ground_grass_1.png");
 	std::vector<Entity> grassEntities = {Entity(Vector2f(0, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(30, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(60, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(90, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(120, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(150, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(180, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(210, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(240, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(270, 156), grassTexture, Vector2f(32,32)),Entity(Vector2f(300, 156), grassTexture, Vector2f(32,32))};
@@ -82,6 +85,8 @@ int main(int argc, char* args[])
 	const float g = 9.81;
 	std::map<int, bool> keyboard, up, down;
 
+	baseMap corrision;
+
 	while (gameRunning)
 	{
 		if ((int)(SDL_GetTicks() - last_ticks) < 1000/desired_fps) {
@@ -102,12 +107,16 @@ int main(int argc, char* args[])
 
 		if(firstLoop) { prevLeft = (int)pos.getx() + 14 + 46; prevRight = (int)pos.getx() + (50/0.55) + 46; prevTop = (int)pos.gety() + 3 + 39; prevBottom = (int)pos.gety() + (50/0.55) + 39 + 90; firstLoop = false;}
 		else { prevLeft = left; prevRight = right; prevTop = top; prevBottom = bottom; }
-		if(prevRight == prevLeft) if(prevLeft == prevTop){}
+		if(prevRight == prevLeft) if(prevLeft == prevTop){prevBottom += 1;}
 
 		left = (int)pos.getx() + 14 + 46;
 		right = (int)pos.getx() + (50/0.55) + 46;
 		top = (int)pos.gety() + 3 + 39;
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
+		// std::cout << corrision.mainMap.at(collisionBox.getxPos()*collisionBox.getyPos()) << "		\r";
+		
+		std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
+		// SDL_Delay(50);
 
 		window.clear();
 
@@ -217,7 +226,7 @@ int main(int argc, char* args[])
 		// if(right >= 850) {knight.setxPos(prevRight - (50/0.55) - 46); std::cout << "collision right     "; collisionRight = true;}
 		// if(left <= 150) {knight.setxPos(prevLeft - 14 - 46); std::cout << "collision left     "; collisionLeft = true;}
 		//ground collision
-		if(bottom > 630) {knight.setyPos(prevBottom - (50/0.55) - 39 - 90); collisionBottom = true; }
+		// if(bottom > 630) {knight.setyPos(prevBottom - (50/0.55) - 39 - 90); collisionBottom = true; }
 		float moveSpeed = 5;
 		if(move == 0 && collisionLeft == false){knight.moveLeft(moveSpeed);}
 		if(move == 1 && collisionRight == false){knight.moveRight(moveSpeed);}
@@ -234,7 +243,7 @@ int main(int argc, char* args[])
 			currentBack--;
 			knight.setxPos(-140);
 		}
-		std::cout << currentBack << "      \r";
+		// std::cout << currentBack << "      \r";
 		
 		if(death == true){window.render(gameOverText, 0.5, 0.5, 0.5);}
 
@@ -245,7 +254,16 @@ int main(int argc, char* args[])
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
 		// printf("  Vertical: %d, %d  Horizontil: %d, %d   \r", left, right, top, bottom);
 
-		if(jumping){knight.jump(firstJump, pos0, speed, speed0, t0, knight, t, collisionBottom, isJumping, move, direction, jumping, bottom, current, run, idle1, g);};
+		if(jumping){knight.jump(firstJump, pos0, speed, speed0, t0, knight, t, collisionBottom, isJumping, move, direction, jumping, bottom, current, run, idle1, g, collisionBox);};
+
+		//1100x1100
+		collisionBox.setxPos(knight.getxPos());
+		collisionBox.setyPos(knight.getyPos());
+		if(collisionBox.getxPos() < 0){ knight.setxPos(0); }
+		if(collisionBox.getxPos()+1100*0.08 > 1280){ knight.setxPos(1280 - (50/0.55)); }
+		// std::cout << collisionBox.getxPos() << ", " << collisionBox.getyPos() << "  " << collisionBox.getxPos()+1100*0.08 << ", " << collisionBox.getyPos()+1100*0.175 << "		\r";
+		window.render(collisionBox, 1, 0.08, 0.175);
+
 		window.display();
 	}
 
