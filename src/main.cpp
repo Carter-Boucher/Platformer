@@ -12,6 +12,8 @@
 #include "Entity.hpp"
 #include "Math.hpp"
 #include "utils.hpp"
+#include "CollisionBox.hpp"
+#include "CollisionPlane.hpp"
 
 float getMoveSpeed(int refreshRate);
 
@@ -82,6 +84,8 @@ int main(int argc, char* args[])
 	SDL_RendererFlip flipType = SDL_FLIP_NONE;
 	bool collisionLeft = false, collisionRight = false, collisionTop = false, collisionBottom = false, firstLoop = true, 
 		direction = true, death = false, isJumping = false, firstJump = false, jumping = false, gameRunning = true;
+	//debug collision box
+	bool collisionDebug = true;
 	const float g = 9.81;
 	std::map<int, bool> keyboard, up, down;
 
@@ -262,7 +266,7 @@ int main(int argc, char* args[])
 		if(collisionBox.getxPos() < 0){ knight.setxPos(0); }
 		if(collisionBox.getxPos()+1100*0.08 > 1280){ knight.setxPos(1280 - (50/0.55)); }
 		// std::cout << collisionBox.getxPos() << ", " << collisionBox.getyPos() << "  " << collisionBox.getxPos()+1100*0.08 << ", " << collisionBox.getyPos()+1100*0.175 << "		\r";
-		window.render(collisionBox, 1, 0.08, 0.175);
+		if(collisionDebug) window.render(collisionBox, 1, 0.08, 0.175);
 
 		window.display();
 	}
