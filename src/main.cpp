@@ -90,7 +90,7 @@ int main(int argc, char* args[])
 	std::map<int, bool> keyboard, up, down;
 
 	baseMap corrision;
-
+	knight.setyPos(0);
 	while (gameRunning)
 	{
 		if ((int)(SDL_GetTicks() - last_ticks) < 1000/desired_fps) {
@@ -117,9 +117,9 @@ int main(int argc, char* args[])
 		right = (int)pos.getx() + (50/0.55) + 46;
 		top = (int)pos.gety() + 3 + 39;
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
-		// std::cout << corrision.mainMap.at(collisionBox.getxPos()*collisionBox.getyPos()) << "		\r";
 		
-		std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
+		
+		// std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
 		// SDL_Delay(50);
 
 		window.clear();
@@ -171,7 +171,7 @@ int main(int argc, char* args[])
 				else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = run;	  move = 1; deathCounter = 0;death = false; direction = true; collisionLeft = false; collisionTop = false; collisionBottom = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = run;	  move = 0; deathCounter = 0;death = false; direction = false; collisionRight = false; collisionTop = false; collisionBottom = false;}
-				else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
+				//else if (event.key.keysym.scancode == SDL_SCANCODE_W) 	  {current = run;	  move = 2; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_S) 	  {current = run;	  move = 3; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_SPACE) {current = jump;    deathCounter = 0; death = false; firstJump = true; jumping = true;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_T) 	  {current = mid;     move = -1; deathCounter = 0;death = false;}
@@ -263,9 +263,20 @@ int main(int argc, char* args[])
 		//1100x1100
 		collisionBox.setxPos(knight.getxPos());
 		collisionBox.setyPos(knight.getyPos());
-		if(collisionBox.getxPos() < 0){ knight.setxPos(0); }
-		if(collisionBox.getxPos()+1100*0.08 > 1280){ knight.setxPos(1280 - (50/0.55)); }
-		// std::cout << collisionBox.getxPos() << ", " << collisionBox.getyPos() << "  " << collisionBox.getxPos()+1100*0.08 << ", " << collisionBox.getyPos()+1100*0.175 << "		\r";
+		if(collisionBox.getxPos() < 0){ knight.setxPos(0); std::cout << "collision left 	\n";}
+		if(collisionBox.getxPos()+1100*0.08 > 1280){ knight.setxPos(1280 - (90)); std::cout << "collision right 	\n";}
+		if(collisionBox.getyPos()+192 > 630){ knight.setyPos(627-192); std::cout << "collision bottom 	\n";}
+		if(collisionBox.getyPos()+192 < 627 && !jumping){ knight.moveDown(5 + (g * 1 * t * t)); }
+		//std::cout << collisionBox.getxPos() << ", " << collisionBox.getyPos() << "  " << collisionBox.getxPos()+1100*0.08 << ", " << collisionBox.getyPos()+192 << "	";
+		// if(collisionBox.getxPos()*collisionBox.getyPos() >= 0) std::cout << corrision.mainMap.at(collisionBox.getxPos()*collisionBox.getyPos()) << "		\r";
+		//if(collisionBox.getxPos()*collisionBox.getyPos() >= 0 && collisionBox.getxPos() < 1280 && collisionBox.getyPos() < 720 && collisionBox.getxPos() >= 0 && collisionBox.getyPos() >= 0 && collisionBox.getxPos()*collisionBox.getyPos() < 921600){
+			//printf("	%d, %d, %d, %d 				\r", 
+				//(int)corrision.mainMap.at(collisionBox.getxPos()*collisionBox.getyPos()), //topleft
+				//(int)corrision.mainMap.at(collisionBox.getxPos()*(collisionBox.getyPos()+192)), //bottomleft
+				//(int)corrision.mainMap.at((collisionBox.getxPos()+1100*0.08)*collisionBox.getyPos()), //topright
+				//(int)corrision.mainMap.at((collisionBox.getxPos()+1100*0.08)*(collisionBox.getyPos()+192))); //bottomright
+		//}
+		// std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
 		if(collisionDebug) window.render(collisionBox, 1, 0.08, 0.175);
 
 		window.display();

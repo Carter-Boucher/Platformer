@@ -24,7 +24,7 @@ const SDL_Rect Entity::getConstFrame(){
 
 void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& speed0, float& t0, Entity& knight, float& t, 
 	bool& collisionBottom, bool& isJumping, const int move, const bool direction, bool& jumping, const int bottom, std::vector<std::pair<size_t, size_t>>& current,
-	std::vector<std::pair<size_t, size_t>>& run, std::vector<std::pair<size_t, size_t>>& idle1, const float g, const Entity collisionBox){
+	std::vector<std::pair<size_t, size_t>>& run, std::vector<std::pair<size_t, size_t>>& idle1, const float g, Entity collisionBox){
 	int speedJump = 1500;
 	if(firstJump){
 		t0=utils::hireTimeInSeconds();
@@ -53,11 +53,11 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 		}
 
 	    // test that the character is not on the ground again.
-	    if (bottom > 630)
+	    if(collisionBox.getyPos() + 192 > 630)
 	    {
 	    	jumping = false;
 	    	//std::cout << "here";
-	        knight.setyPos(627 - (50/0.55) - 39 - 90);
+	        knight.setyPos(627-192);
 	        collisionBottom = false;
 	        isJumping = false;
 	        firstJump = false;
