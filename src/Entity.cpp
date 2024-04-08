@@ -23,8 +23,7 @@ const SDL_Rect Entity::getConstFrame(){
 }
 
 void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& speed0, float& t0, Entity& knight, float& t, 
-	bool& collisionBottom, bool& isJumping, const int move, const bool direction, bool& jumping, const int bottom, std::vector<std::pair<size_t, size_t>>& current,
-	std::vector<std::pair<size_t, size_t>>& run, std::vector<std::pair<size_t, size_t>>& idle1, const float g, Entity collisionBox){
+	bool& collisionBottom, bool& isJumping, const int move, const bool direction, bool& jumping, const int bottom, std::vector<std::pair<size_t, size_t>>& current, std::vector<std::pair<size_t, size_t>>& run, std::vector<std::pair<size_t, size_t>>& idle1, const float g, Entity collisionBox){
 	int speedJump = 1500;
 	if(firstJump){
 		t0=utils::hireTimeInSeconds();
@@ -36,21 +35,14 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 		firstJump = false;
 		jumping = true;
 	}
-	if (isJumping)
+	if(isJumping)
 	{
 	    t = utils::hireTimeInSeconds() - t0;
 	    //printf("pos: %f, speed: %f, t: %f, g: %f    answer: %f \r", pos0.y, speed0.y, t, g, pos0.y + (speed0.y * t - g * t) * t);
-	    knight.setyPos(pos0.y - (speed0.y * t - g * 250 * t * t));
-	    if(direction && move != -1) knight.setxPos(pos0.x + speed0.x*t);
-	    if(!direction && move != -1) knight.setxPos(pos0.x - speed0.x*t);
-	    //std::cout << speed0.y << "\r";
-
-	    if(knight.getxPos() < -150){
-			knight.setxPos(1240);
-		}
-		if(knight.getxPos() > 1250){
-			knight.setxPos(-140);
-		}
+	    if( (g * 175 * t * t) > 570) current = { {3, 1}, {3, 2} };
+	    knight.setyPos(pos0.y - (speed0.y * t - g * 175 * t * t));
+		if(move == 1) knight.setxPos(pos0.x + speed0.x*t);
+	    if(move == 0) knight.setxPos(pos0.x - speed0.x*t);
 
 	    // test that the character is not on the ground again.
 	    if(collisionBox.getyPos() + 192 > 630)
@@ -63,7 +55,7 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 	        firstJump = false;
 	        if(move == 0 || move == 1 || move == 2 || move == 3) current = run;
 	        else{current = idle1;}
-	        SDL_Delay(50);
+	        SDL_Delay(25);
 	    }
 	}
 	return;
