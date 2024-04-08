@@ -33,10 +33,16 @@ public:
 		pos = p_pos;
 	}
 	void setxPos(float p_x){
-		pos.x = p_x;
+		pos.x = (int)p_x;
 	}
 	void setyPos(float p_y){
-		pos.y = p_y;
+		pos.y = (int)p_y;
+	}
+	void setxPos(int p_x){
+		pos.x = (float)p_x;
+	}
+	void setyPos(int p_y){
+		pos.y = (float)p_y;
 	}
 	float getxPos(){
 		return pos.x;
@@ -52,4 +58,5 @@ public:
 	Vector2f size;
 	SDL_Rect currentFrame;
 	float velocityY = 0.f;
+	int direction = -1;
 };

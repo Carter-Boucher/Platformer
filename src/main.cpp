@@ -80,17 +80,15 @@ int main(int argc, char* args[])
 	float accumulator = 0.0f, currentXAnimation = 0.f, currentYAnimation = 0.f, currentTime = utils::hireTimeInSeconds(), t0 = 0.f, t = 0.f, degrees = 0.f;
 	int index = 0, deathCounter = 0, currentBack = 0, move = -1, spriteAnimate = 0, left = 0, right = 0, top = 0, bottom = 0, 
 		prevLeft = 0, prevRight = 0, prevTop = 0, prevBottom = 0, desired_fps = 60, last_ticks = SDL_GetTicks();
-	Vector2f pos =  knight.getPos(), pos0, speed0(1,1), speed;
+	Vector2f pos = knight.getPos(), pos0, speed0(1,1), speed;
 	SDL_RendererFlip flipType = SDL_FLIP_NONE;
 	bool collisionLeft = false, collisionRight = false, collisionTop = false, collisionBottom = false, firstLoop = true, 
-		direction = true, death = false, isJumping = false, firstJump = false, jumping = false, gameRunning = true, falling = false;
+		direction = true, death = false, isJumping = false, firstJump = false, jumping = false, gameRunning = true, falling = true;
 	//debug collision box
 	bool collisionDebug = true;
 	const float g = 9.81;
 	std::map<int, bool> keyboard, up, down;
 
-	baseMap corrision;
-	knight.setyPos(0);
 	t0=utils::hireTimeInSeconds();
 	while (gameRunning)
 	{
@@ -190,9 +188,15 @@ int main(int argc, char* args[])
 				if (event.type == SDL_KEYUP) 				  {current = idle1; move = -1; index = 0; deathCounter = 0;}
 			// }
 		}
-		while (SDL_PollEvent(&event) && (jumping||falling)){
+		while (SDL_PollEvent(&event) && jumping){
 			if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = fall;	  move = 1; deathCounter = 0;death = false; direction = true; collisionLeft = false; collisionTop = false; collisionBottom = false;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = fall;	  move = 0; deathCounter = 0;death = false; direction = false; collisionRight = false; collisionTop = false; collisionBottom = false;}
+			if (event.type == SDL_KEYUP) 				  { std::cout << "here" <<"		\r"; move = -1; index = 0; deathCounter = 0;}
+		}
+		while (SDL_PollEvent(&event) && falling){
+			if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = fall;	  move = 1; deathCounter = 0;death = false; direction = true; collisionLeft = false; collisionTop = false; collisionBottom = false;}
+			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = fall;	  move = 0; deathCounter = 0;death = false; direction = false; collisionRight = false; collisionTop = false; collisionBottom = false;}
+			if (event.type == SDL_KEYUP) 				  { std::cout << "here" <<"		\r"; move = -1; index = 0; deathCounter = 0;}
 		}
 		// std::cout << knight.getxPos() << "		\r";
 		std::random_device dev;
@@ -226,7 +230,7 @@ int main(int argc, char* args[])
 			if(direction) {window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37));}
 			if(!direction) {
 				flipType = SDL_FLIP_HORIZONTAL;
-				window.renderFlip(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37), degrees, NULL, flipType);
+				window.renderFlip(knight, 1, 0.55, 0.55, Vector2f(currentXAnimation,currentYAnimation), Vector2f(50,37), degrees,NULL, flipType);
 			}
 		}
 		spriteAnimate++;
@@ -257,15 +261,17 @@ int main(int argc, char* args[])
 		if(jumping){knight.jump(firstJump, pos0, speed, speed0, t0, knight, t, collisionBottom, isJumping, move, direction, jumping, bottom, current, run, idle1, g, collisionBox);};
 
 		//1100x1100
-		collisionBox.setxPos(knight.getxPos());
-		collisionBox.setyPos(knight.getyPos());
+		collisionBox.setxPos((int)knight.getxPos());
+		collisionBox.setyPos((int)knight.getyPos());
 		if(collisionBox.getxPos() < 0){ knight.setxPos(0); }
 		if(collisionBox.getxPos()+1100*0.08 > 1280){ knight.setxPos(1280 - (90));}
-		if(collisionBox.getyPos()+192 > 630){ current = idle1; knight.setyPos(627-192); falling = false;}
+		if(collisionBox.getyPos()+192 > 630 && !falling){ current = idle1; knight.setyPos((int)(627-192)); falling = false;}
 		if(!jumping) t = utils::hireTimeInSeconds() - t0;
-		if(collisionBox.getyPos()+192 < 627 && !jumping){ current = fall; falling = true; knight.moveDown(pos0.y - (speed0.y*t-g*6*t*t));}
+		if(collisionBox.getyPos()+192 < 628 && !jumping && falling){ current = fall; knight.moveDown(pos0.y - (speed0.y*t-g*6*t*t));
+			if(collisionBox.getyPos()+192 == 627) falling = false;}
 		//std::cout << collisionBox.getxPos() << ", " << collisionBox.getyPos() << "  " << collisionBox.getxPos()+1100*0.08 << ", " << collisionBox.getyPos()+192 << "	";
 		// std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
+		// std::cout << collisionBox.getyPos()+192 << "	\r";
 		if(collisionDebug) window.render(collisionBox, 1, 0.08, 0.175);
 
 		window.display();
