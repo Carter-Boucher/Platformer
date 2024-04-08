@@ -58,5 +58,5 @@ public:
 	Vector2f size;
 	SDL_Rect currentFrame;
 	float velocityY = 0.f;
-	int direction = -1;
+	int prevMove = -2;
 };

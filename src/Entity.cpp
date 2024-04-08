@@ -42,19 +42,18 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 	    if( (g * 175 * t * t) > 570) current = { {3, 1}, {3, 2} };
 	    knight.setyPos(pos0.y - (speed0.y * t - g * 175 * t * t));
 		if(move == 1) {
-			std::cout << "here1\r";
-			knight.setxPos(pos0.x + speed0.x*t);
+			knight.setxPos(knight.getxPos() + speed0.x*t/50);
 		}
 	    if(move == 0) {
-	    	std::cout << "here2\r";
-	    	knight.setxPos(pos0.x - speed0.x*t);
+	    	knight.setxPos(knight.getxPos() - speed0.x*t/50);
 	    }
-	    // std::cout << pos0.x << ", " << speed0.x << "		\r";
-
+	    // printf("%f, %f 		\r\r", pos0.x, speed0.x*t);
+	    // std::cout << pos0.x << ", " << speed0.x*t << "		\r\r";
+	    this->prevMove = move;
 	    // test that the character is not on the ground again.
 	    if(collisionBox.getyPos() + 192 > 630)
 	    {
-	    	this->direction = -1;
+	    	this->prevMove = -2;
 	    	jumping = false;
 	    	//std::cout << "here";
 	        knight.setyPos((int)(627-192));
@@ -66,5 +65,6 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 	        SDL_Delay(25);
 	    }
 	}
+	
 	return;
 }
