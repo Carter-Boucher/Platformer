@@ -23,7 +23,7 @@ const SDL_Rect Entity::getConstFrame(){
 }
 
 void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& speed0, float& t0, Entity& knight, float& t, 
-	bool& collisionBottom, bool& isJumping, const int move, const bool direction, bool& jumping, const int bottom, std::vector<std::pair<size_t, size_t>>& current, std::vector<std::pair<size_t, size_t>>& run, std::vector<std::pair<size_t, size_t>>& idle1, const float g, Entity collisionBox){
+	bool& collisionBottom, bool& isJumping, int& move, const bool direction, bool& jumping, const int bottom, std::vector<std::pair<size_t, size_t>>& current, std::vector<std::pair<size_t, size_t>>& run, std::vector<std::pair<size_t, size_t>>& idle1, const float g, Entity collisionBox){
 	int speedJump = 1500;
 	if(firstJump){
 		t0=utils::hireTimeInSeconds();
@@ -34,6 +34,10 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 		isJumping = true;
 		firstJump = false;
 		jumping = true;
+	}
+	SDL_Event event;
+	while (SDL_PollEvent(&event)){
+		if (event.type == SDL_KEYUP) 				  { std::cout << "here" <<"		\n"; move = -1;}
 	}
 	if(isJumping)
 	{
@@ -49,13 +53,10 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 	    }
 	    // printf("%f, %f 		\r\r", pos0.x, speed0.x*t);
 	    // std::cout << pos0.x << ", " << speed0.x*t << "		\r\r";
-	    this->prevMove = move;
 	    // test that the character is not on the ground again.
 	    if(collisionBox.getyPos() + 192 > 630)
 	    {
-	    	this->prevMove = -2;
 	    	jumping = false;
-	    	//std::cout << "here";
 	        knight.setyPos((int)(627-192));
 	        collisionBottom = false;
 	        isJumping = false;

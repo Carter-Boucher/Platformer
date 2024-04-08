@@ -191,14 +191,14 @@ int main(int argc, char* args[])
 		while (SDL_PollEvent(&event) && jumping){
 			if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = fall;	  move = 1; deathCounter = 0;death = false; direction =true;}
 			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = fall;	  move = 0; deathCounter = 0;death = false; direction = false;}
-			if (event.type == SDL_KEYUP) 				  { std::cout << "here" <<"		\r"; move = -1; index = 0; deathCounter = 0;}
+			if (event.type == SDL_KEYUP) 				  { move = -1; index = 0; deathCounter = 0;}
 		}
 		while (SDL_PollEvent(&event) && falling){
 			if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = fall;	  move = 1; deathCounter = 0;death = false; direction = true; }
 			else if (event.key.keysym.scancode == SDL_SCANCODE_A) 	  {current = fall;	  move = 0; deathCounter = 0;death = false; direction = false;}
-			if (event.type == SDL_KEYUP) 				  { std::cout << "here" <<"		\r"; move = -1; index = 0; deathCounter = 0;}
+			if (event.type == SDL_KEYUP) 				  { move = -1; index = 0; deathCounter = 0;}
 		}
-		printf("%d 	\r", move);
+		// printf("%d 	\r", move);
 		std::random_device dev;
     	std::mt19937 rng(dev());
     	std::uniform_int_distribution<std::mt19937::result_type> dist6(50,1220); // distribution in range [1, 6]
