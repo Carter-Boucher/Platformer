@@ -16,6 +16,20 @@
 #include "CollisionPlane.hpp"
 
 float getMoveSpeed(int refreshRate);
+#define TICK_INTERVAL    15
+
+static Uint32 next_time;
+
+Uint32 time_left(void)
+{
+    Uint32 now;
+
+    now = SDL_GetTicks();
+    if(next_time <= now)
+        return 0;
+    else
+        return next_time - now;
+}
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
@@ -90,10 +104,11 @@ int main(int argc, char* args[])
 	std::map<int, bool> keyboard, up, down;
 
 	t0=utils::hireTimeInSeconds();
+	next_time = SDL_GetTicks() + TICK_INTERVAL;
 	while (gameRunning)
 	{
 		if ((int)(SDL_GetTicks() - last_ticks) < 1000/desired_fps) {
-        	continue;
+        	//continue;
 	    } 
 
 	    // std::cout << "Y: " << pos.y << "\r";
@@ -265,16 +280,26 @@ int main(int argc, char* args[])
 		collisionBox.setyPos((int)knight.getyPos());
 		if(collisionBox.getxPos() < 0){ knight.setxPos(0); }
 		if(collisionBox.getxPos()+1100*0.08 > 1280){ knight.setxPos(1280 - (90));}
-		if(collisionBox.getyPos()+192 > 630 && !falling){ current = idle1; knight.setyPos((int)(627-192)); falling = false;}
+
+		if(collisionBox.getyPos()+192 > 630 && !falling){ 
+			current = idle1; 
+			knight.setyPos((int)(627-192)); falling = false;
+		}
 		if(!jumping) t = utils::hireTimeInSeconds() - t0;
-		if(collisionBox.getyPos()+192 < 628 && !jumping && falling){ current = fall; knight.moveDown(pos0.y - (speed0.y*t-g*6*t*t));
-			if(collisionBox.getyPos()+192 == 627) falling = false;}
+		if(collisionBox.getyPos()+192 < 628 && !jumping && falling){ 
+			current = fall; knight.moveDown(pos0.y - (speed0.y*t-g*6*t*t));
+			if(collisionBox.getyPos()+192 >= 627) {falling = false;}
+		}
 		//std::cout << collisionBox.getxPos() << ", " << collisionBox.getyPos() << "  " << collisionBox.getxPos()+1100*0.08 << ", " << collisionBox.getyPos()+192 << "	";
 		// std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
-		// std::cout << collisionBox.getyPos()+192 << "	\r";
+		std::cout << collisionBox.getyPos()+192 << "	\r";
 		if(collisionDebug) window.render(collisionBox, 1, 0.08, 0.175);
 
 		window.display();
+
+		//SDL_Delay(time_left());
+		SDL_Delay(15);
+        next_time += TICK_INTERVAL;
 	}
 
 	window.cleanUp();
