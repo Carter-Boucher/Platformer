@@ -107,7 +107,7 @@ int main(int argc, char* args[])
 	Vector2f pos = knight.getPos(), pos0, speed0(1,1), speed;
 	SDL_RendererFlip flipType = SDL_FLIP_NONE;
 	bool collisionLeft = false, collisionRight = false, collisionTop = false, collisionBottom = false, firstLoop = true, 
-		direction = true, death = false, isJumping = false, firstJump = false, jumping = false, gameRunning = true, falling = true;
+		direction = true, death = false, isJumping = false, firstJump = false, jumping = false, gameRunning = true, falling = true, attack = false;
 	//debug collision box
 	bool collisionDebug = true;
 	const float g = 9.81;
@@ -121,6 +121,12 @@ int main(int argc, char* args[])
 	int healthbarAnimate = 0;
 	int currentEnemy = 0;
 	int currentHealth = 0;
+	bool moveDirection = false;
+	bool enemyDirection = true;
+
+	enemy.setxPos(knight.getxPos() + 300);
+
+	knight.setyPos(627-192);
 
 	while (gameRunning)
 	{
@@ -211,9 +217,9 @@ int main(int argc, char* args[])
 				else if (event.key.keysym.scancode == SDL_SCANCODE_G) 	  {current = grab;    move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_H) 	  {current = climb;   move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_P) 	  {current = idle2;   move = -1; deathCounter = 0;death = false;}
-				else if (event.key.keysym.scancode == SDL_SCANCODE_1) 	  {current = attack1; move = -1; deathCounter = 0;death = false;}
-				else if (event.key.keysym.scancode == SDL_SCANCODE_2) 	  {current = attack2; move = -1; deathCounter = 0;death = false;}
-				else if (event.key.keysym.scancode == SDL_SCANCODE_3) 	  {current = attack3; move = -1; deathCounter = 0;death = false;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_1) 	  {current = attack1; move = -1; deathCounter = 0;death = false;attack = true;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_2) 	  {current = attack2; move = -1; deathCounter = 0;death = false;attack = true;}
+				else if (event.key.keysym.scancode == SDL_SCANCODE_3) 	  {current = attack3; move = -1; deathCounter = 0;death = false;attack = true;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_9) 	  {collisionDebug = !collisionDebug;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1; deathCounter = 0; death = true;}
@@ -318,29 +324,33 @@ int main(int argc, char* args[])
 		
 		auto l = enemyMove[index1];
 		enemy.setyPos(460);
-		enemy.setxPos(knight.getxPos() + 300);
-		if(enemyAnimate == 0 || enemyAnimate % 3 == 0) {
+		if(moveDirection == false){
+			enemy.moveRight(1);
+			if(enemy.getxPos() > 1100) {moveDirection = true; enemyDirection = !enemyDirection;}
+		} 
+		if(moveDirection == true) {
+			enemy.moveLeft(1);
+			if(enemy.getxPos() < 100) {moveDirection = false; enemyDirection = !enemyDirection;}
+		}
+		if(enemyAnimate == 0 || enemyAnimate % 8 == 0) {
 			currentEnemy = 0 + (715/3)*l;
-			window.renderSprite(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349));
+			flipType = SDL_FLIP_HORIZONTAL;
+			if(!enemyDirection) window.renderSprite(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349));
+			if(enemyDirection) window.renderFlip(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349), degrees,NULL, flipType);
 		}
 		else{
-			window.renderSprite(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349));
+			flipType = SDL_FLIP_HORIZONTAL;
+			if(!enemyDirection) window.renderSprite(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349));
+			if(enemyDirection) window.renderFlip(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349), degrees,NULL, flipType);
 		}
 		index1++;
 		if(index1 >= (int)enemyMove.size()) index1 = 0;
 
-		healthbar.setyPos(enemy.getyPos() - 15);
-		healthbar.setxPos(enemy.getxPos());
-		if(current == attack1 || current == attack2 || current == attack3) index2++;
+		healthbar.setyPos(enemy.getyPos() - 5);
+		healthbar.setxPos(enemy.getxPos() + 30);
+		if((current == attack1 || current == attack2 || current == attack3) && attack) {index2++; attack = false;}
 		auto i = healthbarMove[index2];
-		//if(healthbarAnimate == 0 || healthbarAnimate % 15 == 0) {
-			//currentHealth = 0+((491/5)*i);
-			window.renderSprite(healthbar, 1, 0.375, 0.06125, Vector2f(0, 0+((431/5)*i)), Vector2f(457,431/5));
-		//}
-		//else{
-		//	window.renderSprite(healthbar, 1, 2.5, 0.5, Vector2f(0, currentHealth), Vector2f(508,491/5));
-		//}
-		// index2++;
+		window.renderSprite(healthbar, 1, 0.25, 0.05, Vector2f(0, 0+((431/5)*i)), Vector2f(457,431/5));
 		if(index2 >= (int)healthbarMove.size()) index2 = 0;
 
 		healthbarAnimate++;
