@@ -69,3 +69,55 @@ void Entity::jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& sp
 	
 	return;
 }
+
+void Entity::jumpEnemy(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& speed0, float& t0, Entity& enemy, float& t, 
+	bool& collisionBottom, bool& isJumping, bool& move, const bool direction, bool& jumping, const int bottom, const float g, Entity& knight){
+	int speedJump = 1500;
+	if(firstJump){
+		t0=utils::hireTimeInSeconds();
+		pos0=pos;
+		speed0 = speed;
+		speed0.y += speedJump;
+		speed0.x += speedJump/3;
+		isJumping = true;
+		firstJump = false;
+		jumping = true;
+	}
+	// SDL_Event event;
+	// while (SDL_PollEvent(&event)){
+	// 	if (event.type == SDL_KEYUP) 				  { std::cout << "here" <<"		\n"; move = -1;}
+	// }
+	if(isJumping)
+	{
+		if(enemy.getxPos() < 50) enemy.setxPos(50);
+		if(enemy.getxPos() > 1150) enemy.setxPos(1150);
+	    t = utils::hireTimeInSeconds() - t0;
+	    //printf("pos: %f, speed: %f, t: %f, g: %f    answer: %f \r", pos0.y, speed0.y, t, g, pos0.y + (speed0.y * t - g * t) * t);
+	    //if( (g * 175 * t * t) > 570) current = { {3, 1}, {3, 2} };
+	    enemy.setyPos((float)(pos0.y - (speed0.y * t - g * 500 * t * t)));
+	    //right
+		if(enemy.getxPos() > knight.getxPos()) {
+			enemy.setxPos((float)enemy.getxPos() + speed0.x*t/20);
+			//std::cout << "here\n";
+		}
+		//left
+	    if(enemy.getxPos() < knight.getxPos()) {
+	    	enemy.setxPos((float)enemy.getxPos() - speed0.x*t/20);
+	    	// std::cout << "get\n";
+	    }
+	    // printf("%f, %f 		\r\r", pos0.x, speed0.x*t);
+	    // std::cout << pos0.x << ", " << speed0.x*t << "		\r\r";
+	    // test that the character is not on the ground again.
+	    if(enemy.getyPos()>460)
+	    {
+	    	jumping = false;
+	        enemy.setyPos(460);
+	        collisionBottom = false;
+	        isJumping = false;
+	        firstJump = false;
+	        SDL_Delay(25);
+	    }
+	}
+	
+	return;
+}

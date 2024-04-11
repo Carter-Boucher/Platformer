@@ -52,7 +52,10 @@ public:
 	}
 	void jump(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& speed0, float& t0, Entity& knight, float& t, 
 	bool& collisionBottom, bool& isJumping, int& move, const bool direction, bool& jumping, const int bottom, std::vector<std::pair<size_t, size_t>>& current,
+
 	std::vector<std::pair<size_t, size_t>>& run, std::vector<std::pair<size_t, size_t>>& idle1, const float g, Entity collisionBox);
+	void jumpEnemy(bool& firstJump, Vector2f& pos0, Vector2f& speed, Vector2f& speed0, float& t0, Entity& enemy, float& t, 
+	bool& collisionBottom, bool& isJumping, bool& move, const bool direction, bool& jumping, const int bottom, const float g, Entity& knight);
 	Vector2f pos;
 	SDL_Texture* tex;
 	Vector2f size;

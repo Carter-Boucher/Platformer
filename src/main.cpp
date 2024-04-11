@@ -101,7 +101,7 @@ int main(int argc, char* args[])
 
 
 	SDL_Event event;
-	float accumulator = 0.f, currentXAnimation = 0.f, currentYAnimation = 0.f, currentTime = utils::hireTimeInSeconds(), t0 = 0.f, t = 0.f, degrees = 0.f;
+	float accumulator = 0.f, currentXAnimation = 0.f, currentYAnimation = 0.f, currentTime = utils::hireTimeInSeconds(), t0 = 0.f, t = 0.f, degrees = 0.f, t1 = 0.f;
 	int index = 0, deathCounter = 0, currentBack = 0, move = -1, spriteAnimate = 0, left = 0, right = 0, top = 0, bottom = 0, 
 		prevLeft = 0, prevRight = 0, prevTop = 0, prevBottom = 0, desired_fps = 60, last_ticks = SDL_GetTicks();
 	Vector2f pos = knight.getPos(), pos0, speed0(1,1), speed;
@@ -123,10 +123,14 @@ int main(int argc, char* args[])
 	int currentHealth = 0;
 	bool moveDirection = false;
 	bool enemyDirection = true;
+	bool enemyFirstJump = false, enemyJumping = false, enemyIsJumping = false;
+	t1=utils::hireTimeInSeconds();
+	int enemyRespawn = 0;
 
 	enemy.setxPos(knight.getxPos() + 300);
 
 	knight.setyPos(627-192);
+	enemy.setyPos(460);
 
 	while (gameRunning)
 	{
@@ -224,6 +228,11 @@ int main(int argc, char* args[])
 				else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1; deathCounter = 0; death = true;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump;	  deathCounter = 0;death = false; firstJump = true; jumping = true;}
+				//else if (event.key.keysym.scancode == SDL_SCANCODE_L) 	  { 
+				// 	index2 = 0; 
+				// 	if(knight.getxPos() >= 640) enemy.setxPos(knight.getxPos() + 300);
+				// 	if(knight.getxPos() < 640) enemy.setxPos(knight.getxPos() - 300);
+				// }
 				if (event.type == SDL_KEYUP) 				  {current = idle1; move = -1; index = 0; deathCounter = 0;}
 			// }
 		}
@@ -317,13 +326,13 @@ int main(int argc, char* args[])
 		}
 		//std::cout << collisionBox.getxPos() << ", " << collisionBox.getyPos() << "  " << collisionBox.getxPos()+1100*0.08 << ", " << collisionBox.getyPos()+192 << "	";
 		// std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
-		std::cout << collisionBox.getyPos()+192 << "	\r";
+		// std::cout << collisionBox.getyPos()+192 << "	\r";
 		if(collisionDebug) window.render(collisionBox, 1, 0.08, 0.175);
 
 		// window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(0+(50*p.second), 0+(37*p.first)), Vector2f(50,37))
 		
 		auto l = enemyMove[index1];
-		enemy.setyPos(460);
+		
 		if(moveDirection == false){
 			enemy.moveRight(1);
 			if(enemy.getxPos() > 1100) {moveDirection = true; enemyDirection = !enemyDirection;}
@@ -335,24 +344,42 @@ int main(int argc, char* args[])
 		if(enemyAnimate == 0 || enemyAnimate % 8 == 0) {
 			currentEnemy = 0 + (715/3)*l;
 			flipType = SDL_FLIP_HORIZONTAL;
-			if(!enemyDirection) window.renderSprite(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349));
-			if(enemyDirection) window.renderFlip(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349), degrees,NULL, flipType);
+			if(!enemyDirection && index2 < 5) window.renderSprite(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349));
+			if(enemyDirection && index2 < 5) window.renderFlip(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349), degrees,NULL, flipType);
 		}
 		else{
 			flipType = SDL_FLIP_HORIZONTAL;
-			if(!enemyDirection) window.renderSprite(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349));
-			if(enemyDirection) window.renderFlip(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349), degrees,NULL, flipType);
+			if(!enemyDirection && index2 < 5) window.renderSprite(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349));
+			if(enemyDirection && index2 < 5) window.renderFlip(enemy, 1, 0.25, 0.6, Vector2f(currentEnemy, 0), Vector2f(715/3,349), degrees,NULL, flipType);
 		}
 		index1++;
 		if(index1 >= (int)enemyMove.size()) index1 = 0;
 
 		healthbar.setyPos(enemy.getyPos() - 5);
 		healthbar.setxPos(enemy.getxPos() + 30);
-		if((current == attack1 || current == attack2 || current == attack3) && attack) {index2++; attack = false;}
-		auto i = healthbarMove[index2];
-		window.renderSprite(healthbar, 1, 0.25, 0.05, Vector2f(0, 0+((431/5)*i)), Vector2f(457,431/5));
-		if(index2 >= (int)healthbarMove.size()) index2 = 0;
 
+		bool left = collisionBox.getxPos()-130 < enemy.getxPos();
+		bool right = collisionBox.getxPos()+192+40 > enemy.getxPos()+75;
+		printf("%d, %d 		\r", left, right);
+
+		//printf("%d, %d | %d, %d 		\r", (int)(collisionBox.getxPos()-10) ,(int)(collisionBox.getxPos()+192+10), (int)(enemy.getxPos())    , (int)(enemy.getxPos()+75));
+		if((current == attack1 || current == attack2 || current == attack3) && attack && (collisionBox.getxPos()-130 < enemy.getxPos() && collisionBox.getxPos()+192+40 > enemy.getxPos()+75)) {
+			index2++; 
+			attack = false;
+			enemyFirstJump = true;
+			
+		}
+		enemy.jumpEnemy(enemyFirstJump, pos0, speed, speed0, t0, enemy, t, collisionBottom, enemyIsJumping, enemyDirection, direction, enemyJumping, bottom, g, knight);
+		auto i = healthbarMove[index2];
+		if(index2 < 6) window.renderSprite(healthbar, 1, 0.25, 0.05, Vector2f(0, 0+((431/5)*i)), Vector2f(457,431/5));
+		//if(index2 >= (int)healthbarMove.size()) index2 = 0;
+		// printf("%d		\r", enemyRespawn);
+		if(index2 >= 5) enemyRespawn++;
+		if(enemyRespawn > 100) {
+			index2 = 0; enemyRespawn = 0;
+			if(knight.getxPos() >= 640) enemy.setxPos(knight.getxPos() - 300);
+			if(knight.getxPos() < 640) enemy.setxPos(knight.getxPos() + 300);
+		}
 		healthbarAnimate++;
 		enemyAnimate++;
 
