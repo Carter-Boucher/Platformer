@@ -150,7 +150,7 @@ int main(int argc, char* args[])
 
 		accumulator += frameTime;
 
-		if(firstLoop) { prevLeft = (int)pos.getx() + 14 + 46; prevRight = (int)pos.getx() + (50/0.55) + 46; prevTop = (int)pos.gety() + 3 + 39; prevBottom = (int)pos.gety() + (50/0.55) + 39 + 90; firstLoop = false;}
+		if(firstLoop) { prevLeft = (int)pos.getx() + 14 + 46; prevRight = (int)pos.getx() + (50/0.55) + 46; prevTop = (int)pos.gety() + 3 + 39; prevBottom = (int)pos.gety() + (50/0.55) + 39 + 90; firstLoop = false; current = idle1;}
 		else { prevLeft = left; prevRight = right; prevTop = top; prevBottom = bottom; }
 		if(prevRight == prevLeft) if(prevLeft == prevTop){prevBottom += 1;}
 
