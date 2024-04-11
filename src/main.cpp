@@ -367,7 +367,6 @@ int main(int argc, char* args[])
 			index2++; 
 			attack = false;
 			enemyFirstJump = true;
-			
 		}
 		enemy.jumpEnemy(enemyFirstJump, pos0, speed, speed0, t0, enemy, t, collisionBottom, enemyIsJumping, enemyDirection, direction, enemyJumping, bottom, g, knight);
 		auto i = healthbarMove[index2];
