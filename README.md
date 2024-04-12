@@ -1,8 +1,8 @@
 # PlatformerTut
 
-Platformer built with c++ and SDL2
+Platformer built with c++ and SDL2 to fight infinte zombies.
 
-Build system right now setup only for Sublime Text 
+Build system right now setup only for Sublime Text.
 
 ![image info](res/gfx/pic1.png)
 
