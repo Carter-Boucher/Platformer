@@ -103,11 +103,11 @@ int main(int argc, char* args[])
 	SDL_Event event;
 	float accumulator = 0.f, currentXAnimation = 0.f, currentYAnimation = 0.f, currentTime = utils::hireTimeInSeconds(), t0 = 0.f, t = 0.f, degrees = 0.f, t1 = 0.f;
 	int index = 0, deathCounter = 0, currentBack = 0, move = -1, spriteAnimate = 0, left = 0, right = 0, top = 0, bottom = 0, 
-		prevLeft = 0, prevRight = 0, prevTop = 0, prevBottom = 0, desired_fps = 60, last_ticks = SDL_GetTicks();
+		prevLeft = 0, prevRight = 0, prevTop = 0, prevBottom = 0, desired_fps = 60, last_ticks = SDL_GetTicks(), index1 = 0, index2 = 0, enemyAnimate = 0, healthbarAnimate = 0, currentEnemy = 0, currentHealth = 0;
 	Vector2f pos = knight.getPos(), pos0, speed0(1,1), speed;
 	SDL_RendererFlip flipType = SDL_FLIP_NONE;
 	bool collisionLeft = false, collisionRight = false, collisionTop = false, collisionBottom = false, firstLoop = true, 
-		direction = true, death = false, isJumping = false, firstJump = false, jumping = false, gameRunning = true, falling = true, attack = false;
+		direction = true, death = false, isJumping = false, firstJump = false, jumping = false, gameRunning = true, falling = true, attack = false, moveDirection = false, enemyDirection = true, enemyFirstJump = false, enemyJumping = false, enemyIsJumping = false;
 	//debug collision box
 	bool collisionDebug = true;
 	const float g = 9.81;
@@ -115,15 +115,6 @@ int main(int argc, char* args[])
 
 	t0=utils::hireTimeInSeconds();
 	next_time = SDL_GetTicks() + TICK_INTERVAL;
-	int index1 = 0;
-	int index2 = 0;
-	int enemyAnimate = 0;
-	int healthbarAnimate = 0;
-	int currentEnemy = 0;
-	int currentHealth = 0;
-	bool moveDirection = false;
-	bool enemyDirection = true;
-	bool enemyFirstJump = false, enemyJumping = false, enemyIsJumping = false;
 	t1=utils::hireTimeInSeconds();
 	int enemyRespawn = 0;
 
@@ -158,10 +149,6 @@ int main(int argc, char* args[])
 		right = (int)pos.getx() + (50/0.55) + 46;
 		top = (int)pos.gety() + 3 + 39;
 		bottom = (int)pos.gety() + (50/0.55) + 39 + 90;
-		
-		
-		// std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
-		// SDL_Delay(50);
 
 		window.clear();
 
@@ -205,8 +192,6 @@ int main(int argc, char* args[])
 	                down[event.key.keysym.sym] = false;
 	                break;
 	        }
-
-			// if(!jumping){
 				if (event.type == SDL_QUIT){gameRunning = false;}
 				if (event.key.keysym.scancode == SDL_SCANCODE_4) 	  {current = idle1;   move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_C) 	  {current = crouch;  move = -1; deathCounter = 0;death = false;}
@@ -228,13 +213,7 @@ int main(int argc, char* args[])
 				else if (event.key.keysym.scancode == SDL_SCANCODE_Z) 	  {current = hurt;	  move = -1; deathCounter = 0;death = false;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_X) 	  {current = die;	  move = -1; deathCounter = 0; death = true;}
 				else if (event.key.keysym.scancode == SDL_SCANCODE_0) 	  {current = jump;	  deathCounter = 0;death = false; firstJump = true; jumping = true;}
-				//else if (event.key.keysym.scancode == SDL_SCANCODE_L) 	  { 
-				// 	index2 = 0; 
-				// 	if(knight.getxPos() >= 640) enemy.setxPos(knight.getxPos() + 300);
-				// 	if(knight.getxPos() < 640) enemy.setxPos(knight.getxPos() - 300);
-				// }
 				if (event.type == SDL_KEYUP) 				  {current = idle1; move = -1; index = 0; deathCounter = 0;}
-			// }
 		}
 		while (SDL_PollEvent(&event) && jumping){
 			if (event.key.keysym.scancode == SDL_SCANCODE_D) 	  {current = fall;	  move = 1; deathCounter = 0;death = false; direction =true;}
@@ -328,8 +307,6 @@ int main(int argc, char* args[])
 		// std::cout << collisionBox.getxPos()*collisionBox.getyPos() << "   \r";
 		// std::cout << collisionBox.getyPos()+192 << "	\r";
 		if(collisionDebug) window.render(collisionBox, 1, 0.08, 0.175);
-
-		// window.renderSprite(knight, 1, 0.55, 0.55, Vector2f(0+(50*p.second), 0+(37*p.first)), Vector2f(50,37))
 		
 		auto l = enemyMove[index1];
 		
@@ -385,7 +362,6 @@ int main(int argc, char* args[])
 		window.display();
 
 		SDL_Delay(time_left());
-		// SDL_Delay(200);
         next_time += TICK_INTERVAL;
 	}
 
