@@ -99,7 +99,6 @@ int main(int argc, char* args[])
 	Entity healthbar(Vector2f(100, 500), healthBarText, Vector2f(457,431));
 	std::vector< size_t > healthbarMove { 0, 1, 2, 3, 4 };
 
-
 	SDL_Event event;
 	float accumulator = 0.f, currentXAnimation = 0.f, currentYAnimation = 0.f, currentTime = utils::hireTimeInSeconds(), t0 = 0.f, t = 0.f, degrees = 0.f, t1 = 0.f;
 	int index = 0, deathCounter = 0, currentBack = 0, move = -1, spriteAnimate = 0, left = 0, right = 0, top = 0, bottom = 0, 
